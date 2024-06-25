@@ -1,0 +1,34 @@
+/* All of the buttons should be defined only in a js file */
+#Credit {
+  grid-column: 2;
+  grid-row: var(--credit);
+}
+
+#Levels {
+  grid-column: 2;
+  grid-row: 1;
+}
+#Sound {
+  grid-column: 2;
+  grid-row: 2;
+}
+#Exit {
+  grid-column: 2;
+  grid-row: 3;
+}
+#LevelsLetter {
+  grid-column: 1;
+  grid-row: 1;
+}
+#SoundLetter {
+  grid-column: 1;
+  grid-row: 2;
+}
+#ExitLetter {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+#menu {
+  grid-template: repeat(5, 1fr) / 1fr 2fr 8fr;
+}

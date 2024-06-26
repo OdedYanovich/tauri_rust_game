@@ -1,4 +1,3 @@
-console.log('1');
 const wrapElement = (c) => {
   return "<d>" + c + "</d>";
 };

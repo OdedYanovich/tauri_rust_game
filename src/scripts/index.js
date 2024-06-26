@@ -1,8 +1,12 @@
 import { HTML } from "./dom.js";
 import { levelsFn, soundFn, exitFn, creditFn, gameFn } from "./mods.js";
-console.log('4');
-// import init, { Mod } from "../pkg/hello_wasm.js";
 const { invoke } = window.__TAURI__.tauri;
+
+const modLevels = 1;
+const modSound = 2;
+const modExit = 3;
+const modCredit = 4;
+const modGame = 5;
 
 let greetInputEl;
 async function greet() {
@@ -23,12 +27,13 @@ const modsFunction = {
 class MenuMod {
   // clearInterval(intervalId); //should happened after the mod "game" is left
   constructor() {
-    this.current = 4; // Necessary for the first check of "set"
-    this.set(4 /*Mod.Credit*/);
+    this.current = modCredit; // Necessary for the first check of "set"
+    this.set(modCredit);
   }
   set(i) {
     html.mainText[this.current - 1].classList.remove("seen");
-    if (this.current < 4) html.sideText[this.current - 1].classList.add("seen");
+    if (this.current < modCredit)
+      html.sideText[this.current - 1].classList.add("seen");
     this.current = i;
     this.fn = modsFunction[this.current];
 
@@ -38,7 +43,7 @@ class MenuMod {
 
     document.documentElement.style.setProperty("--credit", this.current);
     html.mainText[this.current - 1].classList.add("seen");
-    if (this.current < 4 /*Mod.Credit*/)
+    if (this.current < modCredit)
       html.sideText[this.current - 1].classList.remove("seen");
   }
 }
@@ -50,9 +55,9 @@ let healthAmount = 100; //Why dose the bar refill every time 'game mod' begin?
 // html.health.style.height = healthAmount + "%";
 
 const keyToMod = {
-  q: 1 /*Mod.Levels*/,
-  a: 2 /*Mod.Sound*/,
-  z: 3 /*Mod.Exit*/,
+  q: modLevels,
+  a: modSound,
+  z: modExit,
 };
 window.addEventListener("keydown", (event) => {
   let key = event.key.toLowerCase();
@@ -65,13 +70,13 @@ window.addEventListener("keydown", (event) => {
   let mod_associated_with_current_press = keyToMod[key];
   if (mod_associated_with_current_press) {
     if (menuMod.current === mod_associated_with_current_press) {
-      menuMod.set(4 /*Mod.Credit*/);
+      menuMod.set(modCredit);
     } else {
       menuMod.set(mod_associated_with_current_press);
     }
     return;
   }
-  if (menuMod.fn(key)) menuMod.set(5 /*Mod.Game*/);
+  if (menuMod.fn(key)) menuMod.set(modGame);
 });
 
 const currentLevel = 36;

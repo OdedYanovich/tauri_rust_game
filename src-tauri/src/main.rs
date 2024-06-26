@@ -20,19 +20,16 @@ fn main() {
 //     Credit = 4,
 //     Game = 5,
 // }
-
 // enum Command {
 //     Bi,
 //     Nbi,
 //     B0b,
 //     Nb0b,
 // }
-
 // enum LevelStage {
 //     FullTable,
 //     ChosenColumn,
 // }
-
 // enum GameStage {
 //     Prepare,
 //     Action,

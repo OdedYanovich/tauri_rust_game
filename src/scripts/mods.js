@@ -1,15 +1,17 @@
-import { levels } from "./levels";
-console.log('3');
-// import init, { LevelStage,GameStage } from "../pkg/hello_wasm.js";
+import { levels } from "./levels.js";
 
-let levelStage = 0; /*LevelStage.FullTable*/
-let gameStage = 0; /*GameStage.Prepare*/
-let gameStarted = false;
+const levelStageFullTable = false;
+const levelStageChosenColumn = true;
+const gameStagePrepare = false;
+const gameStageAction = true;
+
+let levelStage = levelStageFullTable;
+let gameStage = gameStagePrepare;
 
 export const levelsFn = (key) => {
   ["w", "s", "x", "e", "d", "c"];
   if (key !== 0) {
-    if (key === "x" || gameStarted) {
+    if (key === "x" || gameStage) {
       return true;
     }
   }
@@ -35,17 +37,26 @@ export const creditFn = (key) => {
   // ["y"];
   return false;
 };
-export const gameFn = (key) => {
-  const allButtons = ["c", "v", "b", "n"];
-  const selectedLevel = levels[1];
-  let levelButtons = [];
+
+const allButtonsInLargestLevel = ["c", "v", "b", "n"];
+let levelButtons;
+let potentialPresses;
+
+let selectedLevel = levels[1];
+const gameInit = () => {
+  levelButtons = [];
   for (let i = 0; i < selectedLevel.buttons; i++) {
-    levelButtons.push(allButtons[i]);
+    levelButtons.push(allButtonsInLargestLevel[i]);
   }
-  let potentialPresses = [];
+  potentialPresses = [];
   for (let i = 0; i < selectedLevel.presses; i++) {
     potentialPresses.push(levelButtons);
   }
-  // Initialization ends
-  let currentPotentialPresses = potentialPresses;
+};
+export const gameFn = (key) => {
+  if (!gameStage) {
+    gameInit();
+    gameStage = gameStageAction;
+  }
+  let currentPotentialPresses = potentialPresses;//Loop
 };

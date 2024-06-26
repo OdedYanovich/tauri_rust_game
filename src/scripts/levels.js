@@ -1,5 +1,3 @@
-// import init, { Command } from "../pkg/hello_wasm.js";
-console.log('2');
 class Level {
   constructor(buttons, presses, commands) {
     this.buttons = buttons;
@@ -7,11 +5,13 @@ class Level {
     this.commands = commands;
   }
 }
+const commandBi = 0;
+const commandNbi = 1;
 export const levels = {
-  1: new Level(2, 1, [[0 /*Command.Bi*/]]),
-  2: new Level(2, 1, [[1 /*Command.Nbi*/]]),
-  3: new Level(2, 1, [[0 /*Command.Bi*/, 1 /*Command.Nbi*/]]),
-  4: new Level(3, 1, [[0 /*Command.Bi*/]]),
-  5: new Level(3, 1, [[1 /*Command.Nbi*/]]),
-  6: new Level(3, 1, [[0 /*Command.Bi*/, 1 /*Command.Nbi*/]]),
+  1: new Level(2, 1, [[commandBi]]),
+  2: new Level(2, 1, [[commandNbi]]),
+  3: new Level(2, 1, [[commandBi, 1]]),
+  4: new Level(3, 1, [[commandBi]]),
+  5: new Level(3, 1, [[commandNbi]]),
+  6: new Level(3, 1, [[commandBi, 1]]),
 };

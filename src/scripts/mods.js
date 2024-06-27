@@ -41,22 +41,34 @@ export const creditFn = (key) => {
 const allButtonsInLargestLevel = ["c", "v", "b", "n"];
 let levelButtons;
 let potentialPresses;
+let commandRows;
+const siblings = document.querySelector("#GameContent").childNodes;
+const commandToRow = {
+  1: [2],
+  2: [1, 3],
+  3: [1, 2, 3],
+};
 
-let selectedLevel = levels[1];
+// let currentLevel;
 const gameInit = () => {
+  let currentLevel = levels[1];
   levelButtons = [];
-  for (let i = 0; i < selectedLevel.buttons; i++) {
+  for (let i = 0; i < currentLevel.buttons; i++) {
     levelButtons.push(allButtonsInLargestLevel[i]);
   }
   potentialPresses = [];
-  for (let i = 0; i < selectedLevel.presses; i++) {
+  for (let i = 0; i < currentLevel.presses; i++) {
     potentialPresses.push(levelButtons);
   }
+  commandRows = [];
+  commandToRow[currentLevel.commands.length].forEach((e) =>
+    commandRows.push(siblings[e])
+  );//Just set a variable
 };
 export const gameFn = (key) => {
   if (!gameStage) {
     gameInit();
     gameStage = gameStageAction;
   }
-  let currentPotentialPresses = potentialPresses;//Loop
+  let currentPotentialPresses = potentialPresses; //Loop
 };

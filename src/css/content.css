@@ -5,9 +5,6 @@ content {
 #LevelsContent {
   grid-template: repeat(7, 1fr) / repeat(7, 1fr);
 }
-.threeLanes {
-  grid-template-rows: 1fr 1fr 1fr;
-}
 /* #SoundContent {
 } */
 #volume {
@@ -21,6 +18,7 @@ content {
 /* #ExitContent {
 }
 #CreditContent {
-}
+}*/
 #GameContent {
-} */
+  grid-template-rows: subgrid/*var(--rows);*/
+}

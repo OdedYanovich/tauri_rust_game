@@ -20,5 +20,5 @@ content {
 #CreditContent {
 }*/
 #GameContent {
-  grid-template-rows: subgrid/*var(--rows);*/
+  grid-template-rows: /*subgrid*/var(--rows);
 }

@@ -1,7 +1,7 @@
 import { levels } from "./levels.js";
 
 const levelStageFullTable = false;
-const levelStageChosenColumn = true;
+const levelStageChosenRow = true;
 const gameStagePrepare = false;
 const gameStageAction = true;
 
@@ -38,37 +38,46 @@ export const creditFn = (key) => {
   return false;
 };
 
-const allButtonsInLargestLevel = ["c", "v", "b", "n"];
-let levelButtons;
-let potentialPresses;
+const gameContent = document.querySelector("#GameContent");
+const levelButtonsMax = ["c", "v", "b", "n", "m"];
+let levelsButtons;
+let potentialSequences;
 let commandRows;
-const siblings = document.querySelector("#GameContent").childNodes;
-const commandToRow = {
-  1: [2],
-  2: [1, 3],
-  3: [1, 2, 3],
-};
-
-// let currentLevel;
+let currentLevel; //Hopefully the main loop will not need a direct access to the level
 const gameInit = () => {
-  let currentLevel = levels[1];
-  levelButtons = [];
-  for (let i = 0; i < currentLevel.buttons; i++) {
-    levelButtons.push(allButtonsInLargestLevel[i]);
-  }
-  potentialPresses = [];
-  for (let i = 0; i < currentLevel.presses; i++) {
-    potentialPresses.push(levelButtons);
-  }
+  currentLevel = levels[1]; //Should be based on the keys
+  // Repeated "reset then loop"
+  levelsButtons = [];
+  for (let i = 0; i < currentLevel.buttons; i++)
+    levelsButtons.push(levelButtonsMax[i]);
+
+  potentialSequences = [];
+  for (let i = 0; i < currentLevel.presses; i++)
+    potentialSequences.push(levelsButtons);
+
+  gameContent.innerHTML = "";
   commandRows = [];
-  commandToRow[currentLevel.commands.length].forEach((e) =>
-    commandRows.push(siblings[e])
-  );//Just set a variable
+  for (let i = 0; i < currentLevel.commands.length; i++)
+    commandRows.push(gameContent.createElement("d"));
 };
 export const gameFn = (key) => {
   if (!gameStage) {
     gameInit();
     gameStage = gameStageAction;
   }
-  let currentPotentialPresses = potentialPresses; //Loop
+  while (true) {
+    let turnsAvailableButtons = levelsButtons;
+    let turnPotentialSequences = potentialSequences;
+    let turnPotentialSequenceIndex = []; // If the potential presses only has 1 button then his index is removed from the array
+    for (let i = 0; i < turnPotentialSequences.length; i++)
+      turnPotentialSequenceIndex.push(i);
+    currentLevel.commands.array.forEach((element) => {
+      let turnsPotentialPresses =
+        turnPotentialSequences[
+          turnPotentialSequenceIndex[
+            Math.floor(Math.random() * turnAmbiguousSequenceIndex.length)
+          ]
+        ];
+    });
+  }
 };

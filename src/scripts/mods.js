@@ -60,24 +60,41 @@ const gameInit = () => {
   for (let i = 0; i < currentLevel.commands.length; i++)
     commandRows.push(gameContent.createElement("d"));
 };
+
+let progressLost = 25;
+const buttons = ["v", "b"];
+let row;
+const healthHTML = document.querySelector(".health");
 export const gameFn = (key) => {
   if (!gameStage) {
-    gameInit();
+    // gameInit();
     gameStage = gameStageAction;
+
+    document.documentElement.style.setProperty("--rows", 1);
+    document.documentElement.style.setProperty("--progressLost", progressLost);
+    row = document.createElement("d");
+    row.innerText = buttons[Math.floor(Math.random() * buttons.length)];
+    gameContent.appendChild(row);
+    healthHTML.style.setProperty("--progressLost", progressLost + "%");
+    return;
   }
-  while (true) {
-    let turnsAvailableButtons = levelsButtons;
-    let turnPotentialSequences = potentialSequences;
-    let turnPotentialSequenceIndex = []; // If the potential presses only has 1 button then his index is removed from the array
-    for (let i = 0; i < turnPotentialSequences.length; i++)
-      turnPotentialSequenceIndex.push(i);
-    currentLevel.commands.array.forEach((element) => {
-      let turnsPotentialPresses =
-        turnPotentialSequences[
-          turnPotentialSequenceIndex[
-            Math.floor(Math.random() * turnAmbiguousSequenceIndex.length)
-          ]
-        ];
-    });
+  if (buttons.includes(key)) {
+    if (key == row.innerText) progressLost -= 4;
+    else progressLost += 4;
+    healthHTML.style.setProperty("--progressLost", progressLost + "%");
+    row.innerText = buttons[Math.floor(Math.random() * buttons.length)];
   }
+  // let turnsAvailableButtons = levelsButtons;
+  // let turnPotentialSequences = potentialSequences;
+  // let turnPotentialSequenceIndex = []; // If the potential presses only has 1 button then his index is removed from the array
+  // for (let i = 0; i < turnPotentialSequences.length; i++)
+  //   turnPotentialSequenceIndex.push(i);
+  // currentLevel.commands.array.forEach((element) => {
+  //   let turnsPotentialPresses =
+  //     turnPotentialSequences[
+  //       turnPotentialSequenceIndex[
+  //         Math.floor(Math.random() * turnAmbiguousSequenceIndex.length)
+  //       ]
+  //     ];
+  // });
 };

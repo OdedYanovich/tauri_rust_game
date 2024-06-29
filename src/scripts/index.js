@@ -51,7 +51,6 @@ let menuMod = new MenuMod();
 
 let intervalId;
 
-let healthAmount = 100; //Why dose the bar refill every time 'game mod' begin?
 // html.health.style.height = healthAmount + "%";
 
 const keyToMod = {

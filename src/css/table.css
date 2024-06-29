@@ -25,7 +25,7 @@ body {
 .table > * {
   font-size: 3rem;
   display: grid;
-  justify-items: center; 
+  justify-items: center;
   align-items: center;
   /* text-align: center;
   margin: auto */
@@ -36,10 +36,11 @@ body {
 }
 
 .health {
-  border-right: 3px solid;
+  --progressLost: 0%;
+  border-right: 9px solid;
   position: absolute;
-  inset: 0% auto 1% 30%;
-;
+  /* inset: -20% auto 10% 30%; */
+  inset: var(--progressLost) 100% var(--progressLost) 30%;
 }
 
 /* .pseudo::Elements {

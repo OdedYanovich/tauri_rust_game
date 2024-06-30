@@ -1,4 +1,4 @@
-import { levels } from "./levels.js";
+import { levels } from "../levels.js";
 
 const levelStageFullTable = false;
 const levelStageChosenRow = true;
@@ -6,37 +6,8 @@ const gameStagePrepare = false;
 const gameStageAction = true;
 
 let levelStage = levelStageFullTable;
+
 let gameStage = gameStagePrepare;
-
-export const levelsFn = (key) => {
-  ["w", "s", "x", "e", "d", "c"];
-  if (key !== 0) {
-    if (key === "x" || gameStage) {
-      return true;
-    }
-  }
-  // if (key !== "r") {
-  //   // Modify the table
-};
-
-let volume = 50;
-export const soundFn = (key) => {
-  const keyToValue = { y: 1, u: 5, i: 10, o: 25, h: -1, j: -5, k: -10, l: -25 };
-  if (!isNaN(keyToValue[key])) {
-    volume += keyToValue[key];
-    volume < 0 ? (volume = 0) : volume > 100 ? (volume = 100) : volume;
-    document.querySelector("#volume").innerHTML = volume;
-  }
-  return false;
-};
-export const exitFn = (key) => {
-  // ["y"];
-  return false;
-};
-export const creditFn = (key) => {
-  // ["y"];
-  return false;
-};
 
 const gameContent = document.querySelector("#GameContent");
 const levelButtonsMax = ["c", "v", "b", "n", "m"];
@@ -44,7 +15,7 @@ let levelsButtons;
 let potentialSequences;
 let commandRows;
 let currentLevel; //Hopefully the main loop will not need a direct access to the level
-const gameInit = () => {
+const gameInit2 = () => {
   currentLevel = levels[1]; //Should be based on the keys
   // Repeated "reset then loop"
   levelsButtons = [];
@@ -65,19 +36,26 @@ let progressLost = 25;
 const buttons = ["v", "b"];
 let row;
 const healthHTML = document.querySelector(".health");
+export const gameInit = () => {
+  gameStage = gameStageAction;
+  document.documentElement.style.setProperty("--rows", 1);
+  row = document.createElement("d");
+  row.innerText = buttons[Math.floor(Math.random() * buttons.length)];
+  gameContent.appendChild(row);
+  healthHTML.style.setProperty("--progressLost", progressLost + "%");
+};
 export const gameFn = (key) => {
-  if (!gameStage) {
-    // gameInit();
-    gameStage = gameStageAction;
+//   if (!gameStage) {
+//     // gameInit();
+//     gameStage = gameStageAction;
 
-    document.documentElement.style.setProperty("--rows", 1);
-    document.documentElement.style.setProperty("--progressLost", progressLost);
-    row = document.createElement("d");
-    row.innerText = buttons[Math.floor(Math.random() * buttons.length)];
-    gameContent.appendChild(row);
-    healthHTML.style.setProperty("--progressLost", progressLost + "%");
-    return;
-  }
+//     document.documentElement.style.setProperty("--rows", 1);
+//     row = document.createElement("d");
+//     row.innerText = buttons[Math.floor(Math.random() * buttons.length)];
+//     gameContent.appendChild(row);
+//     healthHTML.style.setProperty("--progressLost", progressLost + "%");
+//     return;
+//   }
   if (buttons.includes(key)) {
     if (key == row.innerText) progressLost -= 4;
     else progressLost += 4;

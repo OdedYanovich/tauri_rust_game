@@ -21,4 +21,5 @@ content {
 }*/
 #GameContent {
   grid-template-rows: /*subgrid*/var(--rows);
+  font-size: 5rem;
 }

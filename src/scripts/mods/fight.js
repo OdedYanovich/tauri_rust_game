@@ -1,13 +1,10 @@
 import { levels } from "../levels.js";
+import { modFight } from "../index.js";
 
 const levelStageFullTable = false;
 const levelStageChosenRow = true;
-const gameStagePrepare = false;
-const gameStageAction = true;
 
 let levelStage = levelStageFullTable;
-
-let gameStage = gameStagePrepare;
 
 const gameContent = document.querySelector("#GameContent");
 const levelButtonsMax = ["c", "v", "b", "n", "m"];
@@ -32,34 +29,37 @@ const gameInit2 = () => {
     commandRows.push(gameContent.createElement("d"));
 };
 
-let progressLost = 25;
+let progressLost = 0;
 const buttons = ["v", "b"];
 let row;
 const healthHTML = document.querySelector(".health");
 export const gameInit = () => {
-  gameStage = gameStageAction;
+  progressLost = 25;
   document.documentElement.style.setProperty("--rows", 1);
   row = document.createElement("d");
   row.innerText = buttons[Math.floor(Math.random() * buttons.length)];
+  gameContent.innerHTML = "";
   gameContent.appendChild(row);
   healthHTML.style.setProperty("--progressLost", progressLost + "%");
 };
-export const gameFn = (key) => {
-//   if (!gameStage) {
-//     // gameInit();
-//     gameStage = gameStageAction;
 
-//     document.documentElement.style.setProperty("--rows", 1);
-//     row = document.createElement("d");
-//     row.innerText = buttons[Math.floor(Math.random() * buttons.length)];
-//     gameContent.appendChild(row);
-//     healthHTML.style.setProperty("--progressLost", progressLost + "%");
-//     return;
-//   }
+export let intervalId = 0;
+
+export const prepareFight = (key) => {
+  if (key === row.innerText) {
+    progressLost -= 4;
+    intervalId = setInterval(() => {
+      progressLost += 0.01;
+      healthHTML.style.setProperty("--progressLost", progressLost + "%");
+    }, 1);
+    return modFight;
+  }
+};
+export const gameFn = (key) => {
   if (buttons.includes(key)) {
     if (key == row.innerText) progressLost -= 4;
     else progressLost += 4;
-    healthHTML.style.setProperty("--progressLost", progressLost + "%");
+    // healthHTML.style.setProperty("--progressLost", progressLost + "%");
     row.innerText = buttons[Math.floor(Math.random() * buttons.length)];
   }
   // let turnsAvailableButtons = levelsButtons;

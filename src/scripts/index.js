@@ -1,17 +1,18 @@
-import { gameFn, gameInit } from "./mods/fight.js";
+import { gameFn, gameInit, prepareFight, intervalId } from "./mods/fight.js";
 import { levelsFn, soundFn, exitFn, creditFn } from "./mods/menu.js";
 // const { invoke } = window.__TAURI__.tauri;
 
-const sideText = [
+const sideOptionText = [
   document.querySelector("#Levels"),
   document.querySelector("#Sound"),
   document.querySelector("#Exit"),
 ];
-const mainText = [
+const content = [
   document.querySelector("#LevelsContent"),
   document.querySelector("#SoundContent"),
   document.querySelector("#ExitContent"),
   document.querySelector("#CreditContent"),
+  document.querySelector("#GameContent"),
   document.querySelector("#GameContent"),
 ];
 {
@@ -88,17 +89,17 @@ const mainText = [
     levelsOptionsDisplayHTML += wrapElement(c);
   });
   document.querySelector("#SoundTable").innerHTML = soundOptionsDisplayHTML;
-  mainText[0].innerHTML = levelsOptionsDisplayHTML;
+  content[0].innerHTML = levelsOptionsDisplayHTML;
 }
 const modLevels = 1;
 const modSound = 2;
 const modExit = 3;
 const modCredit = 4;
-const modGame = 5;
+export const modFight = 5;
+export const modPrepareFight = 6;
 
 // let greetInputEl;
 // async function greet() {
-//   // https://tauri.app/v1/guides/features/command
 //   greetMsgEl.textContent = await invoke("greet", { name: greetInputEl.value });
 // }
 
@@ -108,8 +109,8 @@ const modsFunction = {
   3: exitFn,
   4: creditFn,
   5: gameFn,
+  6: prepareFight,
 };
-// Will be Necessary
 // getComputedStyle(document.documentElement).getPropertyValue("--credit")
 // document.documentElement.style.getPropertyValue("--credit", this.current)
 
@@ -120,22 +121,22 @@ class MenuMod {
     this.set(modCredit);
   }
   set(i) {
-    mainText[this.current - 1].classList.remove("seen");
+    if ((this.current === modFight)) clearInterval(intervalId);
+    content[this.current - 1].classList.remove("seen");
     if (this.current < modCredit)
-      sideText[this.current - 1].classList.add("seen");
+      sideOptionText[this.current - 1].classList.add("seen");
+
     this.current = i;
     this.fn = modsFunction[this.current];
-    if (this.current === modGame) gameInit();
+    if (this.current === modPrepareFight) gameInit();
 
     document.documentElement.style.setProperty("--credit", this.current);
-    mainText[this.current - 1].classList.add("seen");
+    content[this.current - 1].classList.add("seen");
     if (this.current < modCredit)
-      sideText[this.current - 1].classList.remove("seen");
+      sideOptionText[this.current - 1].classList.remove("seen");
   }
 }
 let menuMod = new MenuMod();
-
-let intervalId;
 
 // sideText[0].style.height =   "1%";
 
@@ -157,7 +158,8 @@ window.addEventListener("keydown", (event) => {
     }
     return;
   }
-  if (menuMod.fn(key)) menuMod.set(modGame);
+  const modRequestedTransition = menuMod.fn(key);
+  if (modRequestedTransition) menuMod.set(modRequestedTransition);
 });
 
 const currentLevel = 36;

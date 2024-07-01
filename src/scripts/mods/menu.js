@@ -1,7 +1,8 @@
+import { modPrepareFight } from "../index.js";
 export const levelsFn = (key) => {
   // ["w", "s", "x", "e", "d", "c"];
   if (key === "x") {
-    return true;
+    return modPrepareFight;
   }
   // if (key !== "r") {
   //   // Modify the table

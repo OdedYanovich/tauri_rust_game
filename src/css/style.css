@@ -30,5 +30,5 @@
 }
 
 #menu {
-  grid-template: repeat(5, 1fr) / 1fr 2fr 8fr;
+  grid-template: repeat(6, 1fr) / 1fr 2fr 8fr;
 }

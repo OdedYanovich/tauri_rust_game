@@ -1,5 +1,5 @@
 import { levels } from "../levels.js";
-import { modFight } from "../index.js";
+import { fightID } from "../dom.js";
 
 const levelStageFullTable = false;
 const levelStageChosenRow = true;
@@ -52,7 +52,7 @@ export const prepareFight = (key) => {
       progressLost += 0.01;
       healthHTML.style.setProperty("--progressLost", progressLost + "%");
     }, 1);
-    return modFight;
+    return fightID;
   }
 };
 export const gameFn = (key) => {

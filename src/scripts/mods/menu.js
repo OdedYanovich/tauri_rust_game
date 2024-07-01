@@ -1,8 +1,8 @@
-import { modPrepareFight } from "../index.js";
+import { prepareFightID } from "../dom.js";
 export const levelsFn = (key) => {
   // ["w", "s", "x", "e", "d", "c"];
   if (key === "x") {
-    return modPrepareFight;
+    return prepareFightID;
   }
   // if (key !== "r") {
   //   // Modify the table

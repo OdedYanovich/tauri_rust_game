@@ -25,82 +25,7 @@ const content = [
   document.querySelector("#GameContent"),
   document.querySelector("#GameContent"),
 ];
-{
-  const wrapElement = (c) => {
-    return "<d>" + c + "</d>";
-  };
-  let soundOptionsDisplayHTML = ``;
-  [
-    ["y", 1],
-    ["u", 5],
-    ["i", 10],
-    ["o", 25],
-    ["h", -1],
-    ["j", -5],
-    ["k", -10],
-    ["l", -25],
-  ].forEach(([key, value], index, array) => {
-    soundOptionsDisplayHTML += wrapElement(key);
-    soundOptionsDisplayHTML += wrapElement(value);
-  });
 
-  let levelsOptionsDisplayHTML = ``;
-  [
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "W",
-    "DO",
-    7,
-    13,
-    19,
-    25,
-    31,
-    "S",
-    "Don't",
-    8,
-    14,
-    20,
-    26,
-    32,
-    "X",
-    3,
-    9,
-    15,
-    21,
-    27,
-    "",
-    "E",
-    4,
-    10,
-    16,
-    22,
-    28,
-    "",
-    "D",
-    5,
-    11,
-    17,
-    23,
-    29,
-    "",
-    "C",
-    6,
-    12,
-    18,
-    24,
-    "Score",
-    "Rush",
-  ].forEach((c) => {
-    levelsOptionsDisplayHTML += wrapElement(c);
-  });
-  document.querySelector("#SoundTable").innerHTML = soundOptionsDisplayHTML;
-  content[0].innerHTML = levelsOptionsDisplayHTML;
-}
 const modsFunction = {
   1: levelsFn,
   2: soundFn,
@@ -110,7 +35,6 @@ const modsFunction = {
   6: prepareFight,
 };
 // getComputedStyle(document.documentElement).getPropertyValue("--credit")
-// document.documentElement.style.getPropertyValue("--credit", this.current)
 
 class MenuMod {
   constructor() {
@@ -135,17 +59,13 @@ class MenuMod {
 }
 let menuMod = new MenuMod();
 
-// sideText[0].style.height =   "1%";
-
 const keyToMod = {
   q: levelsID,
   a: soundID,
   z: exitID,
 };
 window.addEventListener("keydown", (event) => {
-  // if (key === "Escape") {}
   let key = event.key.toLowerCase();
-
   let mod_associated_with_current_press = keyToMod[key];
   if (mod_associated_with_current_press) {
     if (menuMod.current === mod_associated_with_current_press) {

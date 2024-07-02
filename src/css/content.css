@@ -16,6 +16,6 @@ content {
   grid-template: 1fr 1fr / repeat(8, 1fr);
 }
 #GameContent {
-  grid-template-rows: /*subgrid*/var(--rows);
+  grid-template-rows: var(--rows);
   font-size: 5rem;
 }

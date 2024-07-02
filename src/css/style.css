@@ -7,3 +7,4 @@
 #menu {
   grid-template: repeat(6, 1fr) / 1fr 2fr 8fr;
 }
+

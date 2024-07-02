@@ -1,6 +1,6 @@
 import { prepareFightID } from "../dom.js";
 export const levelsFn = (key) => {
-  // ["w", "s", "x", "e", "d", "c"];
+  // ["w", "s", "e", "d", "r", "f"];
   if (key === "x") {
     return prepareFightID;
   }
@@ -19,10 +19,10 @@ export const soundFn = (key) => {
   return false;
 };
 export const exitFn = (key) => {
-  // ["y"];
+  if (key === "y") close();
   return false;
 };
 export const creditFn = (key) => {
-  // ["y"];
+  
   return false;
 };

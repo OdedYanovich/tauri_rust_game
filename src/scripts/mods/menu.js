@@ -1,11 +1,43 @@
-import { prepareFightID } from "../dom.js";
-export const levelsFn = (key) => {
-  // ["w", "s", "e", "d", "r", "f"];
-  if (key === "x") {
-    return prepareFightID;
+import {
+  prepareFightID,
+  allLevels,
+  selectedLevels,
+  wrapElement,
+} from "../dom.js";
+export const levelButtons = ["w", "s", "x", "e", "d", "c"];
+
+const fullTable = false;
+// const chosenRow = true;
+
+let levelStage = fullTable;
+export const isTableFull = (answer) => {
+  levelStage = answer;
+  if (answer) {
+    allLevels.style.display = "grid";
+    selectedLevels.style.display = "none";
+  } else {
+    allLevels.style.display = "none";
+    selectedLevels.style.display = "grid";
   }
-  // if (key !== "r") {
-  //   // Modify the table
+};
+export const levelsFn = (key) => {
+  if (!levelStage && key === "r") isTableFull(true);
+  if (levelButtons.includes(key)) {
+    if (!levelStage) return prepareFightID;
+    else {
+      isTableFull(false);
+      const buttonRow = levelButtons.findIndex((b) => b === key) + 1;
+      selectedLevels.style.gridRow = buttonRow + "/" + (buttonRow + 2);
+      let selectedLevelsContent = wrapElement("");
+      levelButtons.forEach((b) => {
+        selectedLevelsContent += wrapElement(b.toLocaleUpperCase());
+      });
+      selectedLevelsContent+=wrapElement("r")
+      for (let i = buttonRow; i < 37; i += 6)
+        selectedLevelsContent += wrapElement(i);
+      selectedLevels.innerHTML = selectedLevelsContent;
+    }
+  }
 };
 
 let volume = 50;
@@ -23,6 +55,5 @@ export const exitFn = (key) => {
   return false;
 };
 export const creditFn = (key) => {
-  
   return false;
 };

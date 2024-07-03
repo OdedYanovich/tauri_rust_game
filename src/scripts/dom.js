@@ -1,3 +1,4 @@
+import { levelButtons } from "./mods/menu.js";
 export const levelsID = 1;
 export const soundID = 2;
 export const exitID = 3;
@@ -17,19 +18,19 @@ const makeElement = (column, row, text, name = "d") => {
 };
 const buttonColumn = 1;
 const optionColumn = 2;
-const levelsButton = makeElement(buttonColumn, levelsID, "Q");
-const soundButton = makeElement(buttonColumn, soundID, "A");
-const exitButton = makeElement(buttonColumn, exitID, "Z");
+/*const levelsButton =*/ makeElement(buttonColumn, levelsID, "Q");
+/*const soundButton =*/ makeElement(buttonColumn, soundID, "A");
+/*const exitButton =*/ makeElement(buttonColumn, exitID, "Z");
 export const levels = makeElement(optionColumn, levelsID, "Levels");
 export const sound = makeElement(optionColumn, soundID, "Sound");
 export const exit = makeElement(optionColumn, exitID, "Exit");
-const credit = makeElement(optionColumn, "var(--credit)", "Credit");
+/*const credit =*/ makeElement(optionColumn, "var(--credit)", "Credit");
 const continueFight = makeElement("1/3", 3, "X Continue");
 continueFight.style.fontSize = "2rem";
 continueFight.style.justifyItems = "center";
 continueFight.style.alignItems = "end";
 
-const wrapElement = (c) => {
+export const wrapElement = (c) => {
   return "<d>" + c + "</d>";
 };
 let soundOptionsDisplayHTML = ``;
@@ -47,15 +48,15 @@ let soundOptionsDisplayHTML = ``;
   soundOptionsDisplayHTML += wrapElement(value);
 });
 
-document.querySelector("#SoundTable").innerHTML = soundOptionsDisplayHTML;
-let levelsFullGrid = ["W", "S", "E", "D", "R", "F"];
-for (let index = 1; index < 37; index++) levelsFullGrid.push(index);
-for (let index = 0; index < levelsFullGrid.length; index++) {
-  const element = array[index];
-  
-}
-
-// let levelsOptionsDisplayHTML = ``;
+menu.querySelector("#SoundTable").innerHTML = soundOptionsDisplayHTML;
+let levelsFullGridContent = levelButtons.map((v) => {
+  return v.toLocaleUpperCase();
+});
+for (let index = 1; index < 37; index++) levelsFullGridContent.push(index);
+let levelsFullGrid = "";
+levelsFullGridContent.forEach((v) => {
+  levelsFullGrid += wrapElement(v);
+});
 // [
 //   "",
 //   "",
@@ -109,5 +110,8 @@ for (let index = 0; index < levelsFullGrid.length; index++) {
 // ].forEach((c) => {
 //   levelsOptionsDisplayHTML += wrapElement(c);
 // });
+
 // document.querySelector("#LevelsContent").innerHTML = levelsOptionsDisplayHTML;
-document.querySelector("#LevelsContent").innerHTML = levelsOptionsDisplayHTML;
+export const allLevels = menu.querySelector("#allLevels");
+allLevels.innerHTML = levelsFullGrid;
+export const selectedLevels = menu.querySelector("#selectedLevels");

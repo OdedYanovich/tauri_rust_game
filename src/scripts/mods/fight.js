@@ -1,11 +1,6 @@
 import { levels } from "../levels.js";
 import { fightID } from "../dom.js";
 
-const levelStageFullTable = false;
-const levelStageChosenRow = true;
-
-let levelStage = levelStageFullTable;
-
 const gameContent = document.querySelector("#GameContent");
 const levelButtonsMax = ["c", "v", "b", "n", "m"];
 let levelsButtons;

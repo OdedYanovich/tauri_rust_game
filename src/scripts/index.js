@@ -1,5 +1,10 @@
 import { gameFn, gameInit, prepareFight, intervalId } from "./mods/fight.js";
-import { levelsFn, soundFn, exitFn, creditFn } from "./mods/menu.js";
+import {
+  levelsFn,
+  soundFn,
+  exitFn,
+  creditFn,isTableFull
+} from "./mods/menu.js";
 import {
   levels,
   sound,
@@ -10,6 +15,8 @@ import {
   creditID,
   fightID,
   prepareFightID,
+  allLevels,
+  selectedLevels,
 } from "./dom.js";
 // const { invoke } = window.__TAURI__.tauri;
 // let greetInputEl;
@@ -51,6 +58,9 @@ class MenuMod {
     this.fn = modsFunction[this.current];
     if (this.current === prepareFightID) gameInit();
 
+    if (this.current === levelsID) {
+      isTableFull(true)
+    }
     document.documentElement.style.setProperty("--credit", this.current);
     content[this.current - 1].classList.add("seen");
     if (this.current < creditID)

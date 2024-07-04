@@ -1,14 +1,17 @@
 import { levels } from "../levels.js";
 import { fightID } from "../dom.js";
 
-const gameContent = document.querySelector("#GameContent");
-const levelButtonsMax = ["c", "v", "b", "n", "m"];
+const fightContent = document.querySelector("#GameContent");
+const levelButtonsMax = ["f", "g", "h", "j", "k"];
 let levelsButtons;
 let potentialSequences;
 let commandRows;
 let currentLevel; //Hopefully the main loop will not need a direct access to the level
+
+let progressLost = 0;
 const gameInit2 = () => {
   currentLevel = levels[1]; //Should be based on the keys
+  progressLost = 25;
   // Repeated "reset then loop"
   levelsButtons = [];
   for (let i = 0; i < currentLevel.buttons; i++)
@@ -18,23 +21,25 @@ const gameInit2 = () => {
   for (let i = 0; i < currentLevel.presses; i++)
     potentialSequences.push(levelsButtons);
 
-  gameContent.innerHTML = "";
   commandRows = [];
   for (let i = 0; i < currentLevel.commands.length; i++)
-    commandRows.push(gameContent.createElement("d"));
+    commandRows.push(document.createElement("d"));
+  fightContent.innerHTML = "";
+  commandRows.forEach((row) => {
+    fightContent.innerHTML += row;
+  });
 };
 
-let progressLost = 0;
-const buttons = ["v", "b"];
 let row;
+const buttons = ["v", "b"];
 const healthHTML = document.querySelector(".health");
 export const gameInit = () => {
   progressLost = 25;
-  document.documentElement.style.setProperty("--rows", 1);
+  document.documentElement.style.setProperty("--rows", "1fr");
   row = document.createElement("d");
   row.innerText = buttons[Math.floor(Math.random() * buttons.length)];
-  gameContent.innerHTML = "";
-  gameContent.appendChild(row);
+  fightContent.innerHTML = "";
+  fightContent.appendChild(row);
   healthHTML.style.setProperty("--progressLost", progressLost + "%");
 };
 

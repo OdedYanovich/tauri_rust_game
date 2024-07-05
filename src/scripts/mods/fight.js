@@ -8,8 +8,10 @@ let potentialSequences;
 let commandRows;
 let currentLevel; //Hopefully the main loop will not need a direct access to the level
 
+const healthHTML = document.querySelector(".health");
 let progressLost = 0;
-const gameInit2 = () => {
+let turnPotentialSequences;
+export const gameInit = () => {
   currentLevel = levels[1]; //Should be based on the keys
   progressLost = 25;
   // Repeated "reset then loop"
@@ -22,48 +24,59 @@ const gameInit2 = () => {
     potentialSequences.push(levelsButtons);
 
   commandRows = [];
-  for (let i = 0; i < currentLevel.commands.length; i++)
+  fightContent.innerHTML = "";
+  for (let i = 0; i < currentLevel.commands.length; i++) {
     commandRows.push(document.createElement("d"));
-  fightContent.innerHTML = "";
-  commandRows.forEach((row) => {
-    fightContent.innerHTML += row;
-  });
-};
+    fightContent.appendChild(commandRows[i]);
+  }
 
-let row;
-const buttons = ["v", "b"];
-const healthHTML = document.querySelector(".health");
-export const gameInit = () => {
-  progressLost = 25;
-  document.documentElement.style.setProperty("--rows", "1fr");
-  row = document.createElement("d");
-  row.innerText = buttons[Math.floor(Math.random() * buttons.length)];
-  fightContent.innerHTML = "";
-  fightContent.appendChild(row);
   healthHTML.style.setProperty("--progressLost", progressLost + "%");
+  turnPotentialSequences = potentialSequences;
+  const selectedButtonIndex = Math.floor(
+    Math.random() * turnPotentialSequences[0].length
+  );
+  commandRows[0].innerText = turnPotentialSequences[0][selectedButtonIndex];
+  turnPotentialSequences[0] = turnPotentialSequences[0].filter(
+    (e, i) => i === selectedButtonIndex
+  );
 };
 
 export let intervalId = 0;
 
 export const prepareFight = (key) => {
-  if (key === row.innerText) {
+  if (key === turnPotentialSequences[0][0]) {
     progressLost -= 4;
     intervalId = setInterval(() => {
-      progressLost += 0.01;
+      progressLost += 0.02;
       healthHTML.style.setProperty("--progressLost", progressLost + "%");
     }, 1);
+    turnPotentialSequences = potentialSequences;
+    const selectedButtonIndex = Math.floor(
+      Math.random() * turnPotentialSequences[0].length
+    );
+    commandRows[0].innerText = turnPotentialSequences[0][selectedButtonIndex];
+    turnPotentialSequences[0] = turnPotentialSequences[0].filter(
+      (e, i) => i === selectedButtonIndex
+    );
     return fightID;
   }
 };
-export const gameFn = (key) => {
-  if (buttons.includes(key)) {
-    if (key == row.innerText) progressLost -= 4;
+export const fight = (key) => {
+  if (levelsButtons.includes(key)) {
+    if (key === turnPotentialSequences[0][0]) progressLost -= 4;
     else progressLost += 4;
-    // healthHTML.style.setProperty("--progressLost", progressLost + "%");
-    row.innerText = buttons[Math.floor(Math.random() * buttons.length)];
+    turnPotentialSequences = potentialSequences;
+    const selectedButtonIndex = Math.floor(
+      Math.random() * turnPotentialSequences[0].length
+    );
+    commandRows[0].innerText = turnPotentialSequences[0][selectedButtonIndex];
+    turnPotentialSequences[0] = turnPotentialSequences[0].filter(
+      (e, i) => i === selectedButtonIndex
+    );
+    // commandRows[0].innerText =
+    //   levelsButtons[Math.floor(Math.random() * levelsButtons.length)];
   }
   // let turnsAvailableButtons = levelsButtons;
-  // let turnPotentialSequences = potentialSequences;
   // let turnPotentialSequenceIndex = []; // If the potential presses only has 1 button then his index is removed from the array
   // for (let i = 0; i < turnPotentialSequences.length; i++)
   //   turnPotentialSequenceIndex.push(i);

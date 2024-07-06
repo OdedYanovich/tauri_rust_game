@@ -1,4 +1,4 @@
-import { levels } from "../levels.js";
+import { levels,commandBi } from "../levels.js";
 import { fightID } from "../dom.js";
 
 const fightContent = document.querySelector("#GameContent");
@@ -17,13 +17,22 @@ const newCommand = () => {
   const selectedButtonIndex = Math.floor(
     Math.random() * currentPotentialSequences[0].length
   );
-  commandRows[0].innerText = currentPotentialSequences[0][selectedButtonIndex];
-  currentPotentialSequences[0] = currentPotentialSequences[0].filter(
-    (e, i) => i === selectedButtonIndex
+  const selectedCommandIndex = Math.floor(
+    Math.random() * currentLevel.commands[0].length
   );
+  commandRows[0].innerText = currentPotentialSequences[0][selectedButtonIndex];
+  if (currentLevel.commands[0][selectedCommandIndex] === commandBi){
+    currentPotentialSequences[0] = currentPotentialSequences[0].filter(
+      (e, i) => i === selectedButtonIndex
+    );
+    commandRows[0].style.border = "none";}
+  else {
+    commandRows[0].style.border = "solid";
+    currentPotentialSequences[0].splice(selectedButtonIndex, 1);
+  }
 };
 export const gameInit = () => {
-  currentLevel = levels[1];
+  currentLevel = levels[5];
   progressLost = 25;
   levelsButtons = [];
   for (let i = 0; i < currentLevel.buttons; i++)
@@ -50,7 +59,7 @@ export const prepareFight = (key) => {
   if (key === currentPotentialSequences[0][0]) {
     progressLost -= 4;
     intervalId = setInterval(() => {
-      progressLost += 0.02;
+      progressLost += 0.002;
       healthHTML.style.setProperty("--progressLost", progressLost + "%");
     }, 1);
     newCommand();
@@ -59,8 +68,8 @@ export const prepareFight = (key) => {
 };
 export const fight = (key) => {
   if (levelsButtons.includes(key)) {
-    if (key === currentPotentialSequences[0][0]) progressLost -= 4;
-    else progressLost += 4;
+    if (key === currentPotentialSequences[0][0]) progressLost -= 8;
+    else progressLost += 8;
     newCommand();
   }
   // let turnsAvailableButtons = levelsButtons;

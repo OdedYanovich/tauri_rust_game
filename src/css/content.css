@@ -20,11 +20,13 @@ content {
 #volume {
   grid-row: 1/3;
   font-size: 5rem;
-}
+} 
 #SoundTable {
   grid-row: 3;
   grid-template: 1fr 1fr / repeat(8, 1fr);
 }
-#GameContent >*{
+#GameContent > * {
   font-size: 5rem;
+  border: solid;
+  border-radius:10rem  ;
 }

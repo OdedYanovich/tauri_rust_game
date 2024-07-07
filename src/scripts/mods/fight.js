@@ -1,5 +1,5 @@
-import { levels,commandBi } from "../levels.js";
-import { fightID } from "../dom.js";
+import { levels, commandBi } from "../levels.js";
+import { levelsID } from "../dom.js";
 
 const fightContent = document.querySelector("#GameContent");
 const levelButtonsMax = ["f", "g", "h", "j", "k"];
@@ -12,6 +12,12 @@ const healthHTML = document.querySelector(".health");
 let progressLost = 0;
 let currentPotentialSequences;
 
+setInterval(() => {
+  if (progressLost < 50) progressLost += 0.02;
+  healthHTML.style.setProperty("--progressLost", progressLost + "%");
+}, 1);
+
+progressLost = 50;
 const newCommand = () => {
   currentPotentialSequences = structuredClone(potentialSequences);
   const selectedButtonIndex = Math.floor(
@@ -21,19 +27,18 @@ const newCommand = () => {
     Math.random() * currentLevel.commands[0].length
   );
   commandRows[0].innerText = currentPotentialSequences[0][selectedButtonIndex];
-  if (currentLevel.commands[0][selectedCommandIndex] === commandBi){
+  if (currentLevel.commands[0][selectedCommandIndex] === commandBi) {
     currentPotentialSequences[0] = currentPotentialSequences[0].filter(
       (e, i) => i === selectedButtonIndex
     );
-    commandRows[0].style.border = "none";}
-  else {
+    commandRows[0].style.border = "none";
+  } else {
     commandRows[0].style.border = "solid";
     currentPotentialSequences[0].splice(selectedButtonIndex, 1);
   }
 };
-export const gameInit = () => {
+export const fightInit = () => {
   currentLevel = levels[5];
-  progressLost = 25;
   levelsButtons = [];
   for (let i = 0; i < currentLevel.buttons; i++)
     levelsButtons.push(levelButtonsMax[i]);
@@ -48,28 +53,19 @@ export const gameInit = () => {
     commandRows.push(document.createElement("d"));
     fightContent.appendChild(commandRows[i]);
   }
-
-  healthHTML.style.setProperty("--progressLost", progressLost + "%");
+  // healthHTML.style.setProperty("--progressLost", progressLost + "%");
   newCommand();
 };
 
-export let intervalId = 0;
-
-export const prepareFight = (key) => {
-  if (key === currentPotentialSequences[0][0]) {
-    progressLost -= 4;
-    intervalId = setInterval(() => {
-      progressLost += 0.002;
-      healthHTML.style.setProperty("--progressLost", progressLost + "%");
-    }, 1);
-    newCommand();
-    return fightID;
-  }
-};
 export const fight = (key) => {
   if (levelsButtons.includes(key)) {
-    if (key === currentPotentialSequences[0][0]) progressLost -= 8;
-    else progressLost += 8;
+    if (
+      currentPotentialSequences[0].find((element) => element === key) !==
+      undefined
+    ) {
+      progressLost -= 8;
+      if (progressLost < 0) return levelsID;
+    } else progressLost += 8;
     newCommand();
   }
   // let turnsAvailableButtons = levelsButtons;

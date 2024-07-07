@@ -1,13 +1,8 @@
-import {
-  prepareFightID,
-  allLevels,
-  selectedLevels,
-  wrapElement,
-} from "../dom.js";
+import { fightID, allLevels, selectedLevels, wrapElement } from "../dom.js";
 export const levelButtons = ["w", "s", "x", "e", "d", "c"];
 
 const fullTable = false;
-// const chosenRow = true;
+let chosenLevel = 0;
 
 let levelStage = fullTable;
 export const isTableFull = (answer) => {
@@ -22,8 +17,9 @@ export const isTableFull = (answer) => {
 };
 export const levelsFn = (key) => {
   if (!levelStage && key === "r") isTableFull(true);
+  const chosenLevelIndex = levelButtons.findIndex((e) => key === e);
   if (levelButtons.includes(key)) {
-    if (!levelStage) return prepareFightID;
+    if (!levelStage) return fightID;
     else {
       isTableFull(false);
       const buttonRow = levelButtons.findIndex((b) => b === key) + 1;
@@ -32,7 +28,7 @@ export const levelsFn = (key) => {
       levelButtons.forEach((b) => {
         selectedLevelsContent += wrapElement(b.toLocaleUpperCase());
       });
-      selectedLevelsContent+=wrapElement("r")
+      selectedLevelsContent += wrapElement("r");
       for (let i = buttonRow; i < 37; i += 6)
         selectedLevelsContent += wrapElement(i);
       selectedLevels.innerHTML = selectedLevelsContent;

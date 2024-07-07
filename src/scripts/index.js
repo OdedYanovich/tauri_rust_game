@@ -1,9 +1,10 @@
-import { fight, gameInit, prepareFight, intervalId } from "./mods/fight.js";
+import { fight, fightInit } from "./mods/fight.js";
 import {
   levelsFn,
   soundFn,
   exitFn,
-  creditFn,isTableFull
+  creditFn,
+  isTableFull,
 } from "./mods/menu.js";
 import {
   levels,
@@ -14,7 +15,6 @@ import {
   exitID,
   creditID,
   fightID,
-  prepareFightID,
   allLevels,
   selectedLevels,
 } from "./dom.js";
@@ -39,7 +39,6 @@ const modsFunction = {
   3: exitFn,
   4: creditFn,
   5: fight,
-  6: prepareFight,
 };
 // getComputedStyle(document.documentElement).getPropertyValue("--credit")
 
@@ -49,7 +48,6 @@ class MenuMod {
     this.set(creditID);
   }
   set(mod) {
-    if (this.current === fightID) clearInterval(intervalId);
     content[this.current - 1].classList.remove("seen");
     if (this.current < creditID)
       sideOptionText[this.current - 1].classList.add("seen");
@@ -61,7 +59,7 @@ class MenuMod {
       sideOptionText[this.current - 1].classList.remove("seen");
     this.fn = modsFunction[this.current];
 
-    if (this.current === prepareFightID) gameInit();
+    if (this.current === fightID) fightInit();
 
     if (this.current === levelsID) {
       isTableFull(true);

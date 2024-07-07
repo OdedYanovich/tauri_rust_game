@@ -4,7 +4,6 @@ export const soundID = 2;
 export const exitID = 3;
 export const creditID = 4;
 export const fightID = 5;
-export const prepareFightID = 6;
 
 const menu = document.querySelector("#menu");
 const makeElement = (column, row, text, name = "d") => {

@@ -1,4 +1,4 @@
-import { fight, fightInit } from "./mods/fight.js";
+import { fightFn, fightInit } from "./mods/fight.js";
 import {
   levelsFn,
   soundFn,
@@ -38,7 +38,7 @@ const modsFunction = {
   2: soundFn,
   3: exitFn,
   4: creditFn,
-  5: fight,
+  5: fightFn,
 };
 // getComputedStyle(document.documentElement).getPropertyValue("--credit")
 

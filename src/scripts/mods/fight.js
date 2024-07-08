@@ -1,5 +1,6 @@
 import { levels, commandBi } from "../levels.js";
 import { levelsID } from "../dom.js";
+import { chosenLevel } from "./menu.js";
 
 const fightContent = document.querySelector("#GameContent");
 const levelButtonsMax = ["f", "g", "h", "j", "k"];
@@ -38,7 +39,7 @@ const newCommand = () => {
   }
 };
 export const fightInit = () => {
-  currentLevel = levels[5];
+  currentLevel = levels[chosenLevel - 1];
   levelsButtons = [];
   for (let i = 0; i < currentLevel.buttons; i++)
     levelsButtons.push(levelButtonsMax[i]);
@@ -57,7 +58,7 @@ export const fightInit = () => {
   newCommand();
 };
 
-export const fight = (key) => {
+export const fightFn = (key) => {
   if (levelsButtons.includes(key)) {
     if (
       currentPotentialSequences[0].find((element) => element === key) !==

@@ -1,13 +1,11 @@
 import { fightID, allLevels, selectedLevels, wrapElement } from "../dom.js";
 export const levelButtons = ["w", "s", "x", "e", "d", "c"];
 
-const fullTable = false;
-let chosenLevel = 0;
+export let chosenLevel = 0;
 
-let levelStage = fullTable;
 export const isTableFull = (answer) => {
-  levelStage = answer;
   if (answer) {
+    chosenLevel = 0;
     allLevels.style.display = "grid";
     selectedLevels.style.display = "none";
   } else {
@@ -16,24 +14,25 @@ export const isTableFull = (answer) => {
   }
 };
 export const levelsFn = (key) => {
-  if (!levelStage && key === "r") isTableFull(true);
-  const chosenLevelIndex = levelButtons.findIndex((e) => key === e);
-  if (levelButtons.includes(key)) {
-    if (!levelStage) return fightID;
-    else {
-      isTableFull(false);
-      const buttonRow = levelButtons.findIndex((b) => b === key) + 1;
-      selectedLevels.style.gridRow = buttonRow + "/" + (buttonRow + 2);
-      let selectedLevelsContent = wrapElement("");
-      levelButtons.forEach((b) => {
-        selectedLevelsContent += wrapElement(b.toLocaleUpperCase());
-      });
-      selectedLevelsContent += wrapElement("r");
-      for (let i = buttonRow; i < 37; i += 6)
-        selectedLevelsContent += wrapElement(i);
-      selectedLevels.innerHTML = selectedLevelsContent;
-    }
+  if (chosenLevel !== 0 && key === "r") isTableFull(true);
+  const chosenLevelIndex = levelButtons.findIndex((b) => key === b);
+  if (chosenLevelIndex === -1) return false;
+  if (chosenLevel !== 0) {
+    chosenLevel += 6 * chosenLevelIndex;
+    return fightID;
   }
+  isTableFull(false);
+  chosenLevel += chosenLevelIndex + 1;
+  const buttonRow = chosenLevelIndex + 1;
+  selectedLevels.style.gridRow = buttonRow + "/" + (buttonRow + 2);
+  let selectedLevelsContent = wrapElement("");
+  levelButtons.forEach((b) => {
+    selectedLevelsContent += wrapElement(b.toLocaleUpperCase());
+  });
+  selectedLevelsContent += wrapElement("r");
+  for (let i = buttonRow; i < 37; i += 6)
+    selectedLevelsContent += wrapElement(i);
+  selectedLevels.innerHTML = selectedLevelsContent;
 };
 
 let volume = 50;

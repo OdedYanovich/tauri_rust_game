@@ -1,4 +1,4 @@
-import { levels, commandBi } from "../levels.js";
+import { levels, commandBi, commandNbi } from "../levels.js";
 import { levelsID } from "../dom.js";
 import { chosenLevel } from "./menu.js";
 
@@ -17,31 +17,40 @@ let commandRows;
 let currentLevel;
 
 const healthHTML = document.querySelector(".health");
-let currentPotentialSequences;
+let currentRanges;
 let incompleteSequence;
 
 const newCommand = () => {
-  currentPotentialSequences = structuredClone(ranges);
-  let availableRanges = ranges.keys();console.log(availableRanges);
+  currentRanges = structuredClone(ranges);
+  let availableRanges = Array.from(ranges.keys());
   const getRandomIndex = (arr) => Math.floor(Math.random() * arr.length);
   const selectedCommandIndex = getRandomIndex(currentLevel.commands[0]);
-  const selectedRangeIndex = getRandomIndex(currentPotentialSequences);
-  const selectedButtonIndex = getRandomIndex(
-    currentPotentialSequences[selectedRangeIndex]
-  );
+  const selectedRangeIndex = getRandomIndex(availableRanges);
+  const selectedButtonIndex = getRandomIndex(currentRanges[selectedRangeIndex]);
 
   commandRows[0].innerText =
-    currentPotentialSequences[selectedRangeIndex][selectedButtonIndex] +
+    currentRanges[selectedRangeIndex][selectedButtonIndex] +
     (selectedRangeIndex + 1);
-  if (currentLevel.commands[0][selectedCommandIndex] === commandBi) {
-    currentPotentialSequences[selectedRangeIndex] = currentPotentialSequences[
-      selectedRangeIndex
-    ].filter((e, i) => i === selectedButtonIndex);
-    commandRows[0].style.border = "none";
-  } else {
-    commandRows[0].style.border = "solid";
-    currentPotentialSequences[0].splice(selectedButtonIndex, 1);
+  switch (currentLevel.commands[0][selectedCommandIndex]) {
+    case commandBi:
+      currentRanges[selectedRangeIndex] = [
+        currentRanges[selectedRangeIndex][selectedButtonIndex],
+      ];
+      availableRanges.splice(selectedRangeIndex,1);
+      for (let rangeIndex of availableRanges) {
+        currentRanges[rangeIndex] = currentRanges[rangeIndex].filter(
+          (e) => e !== currentRanges[selectedRangeIndex][0]
+        );
+      }
+      commandRows[0].style.border = "none";
+      break;
+
+    case commandNbi:
+      currentRanges[0].splice(selectedButtonIndex, 1);
+      commandRows[0].style.border = "solid";
+      break;
   }
+  // console.log(currentRanges);
 };
 export const fightInit = () => {
   currentLevel = levels[chosenLevel - 1];
@@ -65,7 +74,7 @@ export const fightFn = (key) => {
     let result = true;
     for (let index = 0; index < currentLevel.presses; index++) {
       if (
-        currentPotentialSequences[index].find(
+        currentRanges[index].find(
           (element) => element === incompleteSequence[index]
         ) === undefined
       ) {

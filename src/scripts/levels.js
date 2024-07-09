@@ -6,7 +6,7 @@ class Level {
   }
 }
 export const commandBi = 0;
-const commandNbi = 1;
+export const commandNbi = 1;
 export const levels = [
   new Level(2, 1, [[commandBi]]),
   new Level(2, 1, [[commandNbi]]), //2

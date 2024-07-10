@@ -16,5 +16,6 @@ export const levels = [
   new Level(3, 1, [[commandBi, commandNbi]]), //6
   new Level(3, 2, [[commandBi]]),
   new Level(3, 2, [[commandNbi]]), //8
-  new Level(3, 2, [[commandBi,commandNbi]]),
+  new Level(3, 2, [[commandBi, commandNbi]]),
+  new Level(3, 1, [[commandNbi], [commandNbi]]), //10
 ];

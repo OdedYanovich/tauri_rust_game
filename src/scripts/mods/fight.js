@@ -12,7 +12,7 @@ setInterval(() => {
 const fightContent = document.querySelector("#GameContent");
 const levelButtonsMax = ["f", "g", "h", "j", "k"];
 let levelsButtons;
-var ranges;
+let ranges;
 let commandRows;
 let currentLevel;
 
@@ -20,37 +20,43 @@ const healthHTML = document.querySelector(".health");
 let currentRanges;
 let incompleteSequence;
 
-const newCommand = () => {
+const newCommand = (commandsPerTurn) => {
   currentRanges = structuredClone(ranges);
   let availableRanges = Array.from(ranges.keys());
-  const getRandomIndex = (arr) => Math.floor(Math.random() * arr.length);
-  const selectedCommandIndex = getRandomIndex(currentLevel.commands[0]);
-  const selectedRangeIndex = getRandomIndex(availableRanges);
-  const selectedButtonIndex = getRandomIndex(currentRanges[selectedRangeIndex]);
+  for (let commandIndex = 0; commandIndex < commandsPerTurn; commandIndex++) {
+    const getRandomIndex = (arr) => Math.floor(Math.random() * arr.length);
+    const selectedCommandIndex = getRandomIndex(currentLevel.commands[commandIndex]);
+    const selectedRangeIndex = getRandomIndex(availableRanges);
+    const selectedButtonIndex = getRandomIndex(
+      currentRanges[selectedRangeIndex]
+    );
 
-  commandRows[0].innerText =
-    currentRanges[selectedRangeIndex][selectedButtonIndex] +
-    (selectedRangeIndex + 1);
-  switch (currentLevel.commands[0][selectedCommandIndex]) {
-    case commandBi:
-      currentRanges[selectedRangeIndex] = [
-        currentRanges[selectedRangeIndex][selectedButtonIndex],
-      ];
-      availableRanges.splice(selectedRangeIndex,1);
-      for (let rangeIndex of availableRanges) {
-        currentRanges[rangeIndex] = currentRanges[rangeIndex].filter(
-          (e) => e !== currentRanges[selectedRangeIndex][0]
-        );
-      }
-      commandRows[0].style.border = "none";
-      break;
+    commandRows[commandIndex].innerText =
+      currentRanges[selectedRangeIndex][selectedButtonIndex] +
+      (selectedRangeIndex + 1);
+    switch (currentLevel.commands[commandIndex][selectedCommandIndex]) {
+      case commandBi:
+        currentRanges[selectedRangeIndex] = [
+          currentRanges[selectedRangeIndex][selectedButtonIndex],
+        ];
+        availableRanges.splice(selectedRangeIndex, 1);
+        for (let rangeIndex of availableRanges) {
+          currentRanges[rangeIndex] = currentRanges[rangeIndex].filter(
+            (e) => e !== currentRanges[selectedRangeIndex][0]
+          );
+        }
+        commandRows[commandIndex].style.border = "none";
+        break;
 
-    case commandNbi:
-      currentRanges[0].splice(selectedButtonIndex, 1);
-      commandRows[0].style.border = "solid";
-      break;
+      case commandNbi:
+        currentRanges[selectedRangeIndex] = currentRanges[
+          selectedRangeIndex
+        ].toSpliced(selectedButtonIndex, 1);
+        commandRows[commandIndex].style.border = "solid";
+        break;
+    }
   }
-  // console.log(currentRanges);
+  console.table(currentRanges);
 };
 export const fightInit = () => {
   currentLevel = levels[chosenLevel - 1];
@@ -65,7 +71,7 @@ export const fightInit = () => {
     commandRows.push(document.createElement("d"));
     fightContent.appendChild(commandRows[i]);
   }
-  newCommand();
+  newCommand(currentLevel.commands.length);
 };
 export const fightFn = (key) => {
   if (levelsButtons.includes(key)) {
@@ -88,7 +94,7 @@ export const fightFn = (key) => {
     } else if (progressLost < progressLostMax) progressLost += 8;
     else progressLost = progressLostMax;
     incompleteSequence = [];
-    newCommand();
+    newCommand(currentLevel.commands.length);
   }
 };
 window.addEventListener("keyup", () => (incompleteSequence = []));

@@ -5,7 +5,7 @@ import { chosenLevel } from "./menu.js";
 const progressLostMax = 50;
 let progressLost = progressLostMax;
 setInterval(() => {
-  if (progressLost < progressLostMax) progressLost += 0.02;
+  if (progressLost < progressLostMax) progressLost += 0.007;
   healthHTML.style.setProperty("--progressLost", progressLost + "%");
 }, 1);
 
@@ -25,7 +25,9 @@ const newCommand = (commandsPerTurn) => {
   let availableRanges = Array.from(ranges.keys());
   for (let commandIndex = 0; commandIndex < commandsPerTurn; commandIndex++) {
     const getRandomIndex = (arr) => Math.floor(Math.random() * arr.length);
-    const selectedCommandIndex = getRandomIndex(currentLevel.commands[commandIndex]);
+    const selectedCommandIndex = getRandomIndex(
+      currentLevel.commands[commandIndex]
+    );
     const selectedRangeIndex = getRandomIndex(availableRanges);
     const selectedButtonIndex = getRandomIndex(
       currentRanges[selectedRangeIndex]
@@ -39,7 +41,8 @@ const newCommand = (commandsPerTurn) => {
         currentRanges[selectedRangeIndex] = [
           currentRanges[selectedRangeIndex][selectedButtonIndex],
         ];
-        availableRanges.splice(selectedRangeIndex, 1);
+        availableRanges = availableRanges.toSpliced(selectedRangeIndex, 1); //.splice(selectedRangeIndex, 1); //
+        console.log(availableRanges);
         for (let rangeIndex of availableRanges) {
           currentRanges[rangeIndex] = currentRanges[rangeIndex].filter(
             (e) => e !== currentRanges[selectedRangeIndex][0]
@@ -56,7 +59,7 @@ const newCommand = (commandsPerTurn) => {
         break;
     }
   }
-  console.table(currentRanges);
+  // console.table(currentRanges);
 };
 export const fightInit = () => {
   currentLevel = levels[chosenLevel - 1];
@@ -89,9 +92,9 @@ export const fightFn = (key) => {
       }
     }
     if (result) {
-      progressLost -= 8;
+      progressLost -= 4;
       if (progressLost < 0) return levelsID;
-    } else if (progressLost < progressLostMax) progressLost += 8;
+    } else if (progressLost < progressLostMax) progressLost += 4;
     else progressLost = progressLostMax;
     incompleteSequence = [];
     newCommand(currentLevel.commands.length);

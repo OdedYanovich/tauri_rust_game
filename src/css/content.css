@@ -30,3 +30,8 @@ content {
   padding: 2rem;
   border-radius: 10rem;
 }
+#GameContent {
+  grid-template-columns: repeat(auto-fit, minMax(1px, 1fr));
+  padding: 5rem;
+  gap: 0;
+}

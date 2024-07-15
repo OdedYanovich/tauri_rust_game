@@ -2,6 +2,10 @@ import { levels, commandBi, commandNbi } from "../levels.js";
 import { levelsID } from "../dom.js";
 import { chosenLevel } from "./menu.js";
 
+const { invoke } = window.__TAURI__.tauri;
+invoke("get_shuffled_indices", { length: 5 }).then((indices) =>
+  console.log(indices)
+);
 const progressLostMax = 50;
 let progressLost = progressLostMax;
 setInterval(() => {
@@ -30,9 +34,15 @@ const shuffle = (arr) => {
 const getRandomIndex = (arr) => Math.floor(Math.random() * arr.length);
 const newCommand = (commandsPerTurn) => {
   currentRanges = structuredClone(levelRanges);
-  const commandsShuffledIndices = shuffle(
-    Array.from(currentLevel.commands.keys())
-  );
+  let commandsShuffledIndices = invoke("get_shuffled_indices", {
+    length: currentLevel.commands.length,
+  }).then((indices) => {
+    return indices;
+  });
+  console.log(commandsShuffledIndices);
+  // const commandsShuffledIndices = shuffle(
+  //   Array.from(currentLevel.commands.keys())
+  // );
   let availableRanges = Array.from(currentRanges.keys());
   for (const commandIndex of commandsShuffledIndices) {
     const selectedCommandIndex = getRandomIndex(

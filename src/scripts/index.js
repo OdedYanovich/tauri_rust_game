@@ -18,11 +18,7 @@ import {
   allLevels,
   selectedLevels,
 } from "./dom.js";
-// const { invoke } = window.__TAURI__.tauri;
-// let greetInputEl;
-// async function greet() {
-//   greetMsgEl.textContent = await invoke("greet", { name: greetInputEl.value });
-// }
+
 const sideOptionText = [levels, sound, exit];
 const content = [
   document.querySelector("#LevelsContent"),

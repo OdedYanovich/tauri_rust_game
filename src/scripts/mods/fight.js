@@ -1,11 +1,9 @@
-import { levels, commandBi, commandNbi } from "../levels.js";
 import { levelsID } from "../dom.js";
 import { chosenLevel } from "./menu.js";
 
+// https://tauri.app/v1/guides/building/resources/
+
 const { invoke } = window.__TAURI__.tauri;
-invoke("get_shuffled_indices", { length: 5 }).then((indices) =>
-  console.log(indices)
-);
 const progressLostMax = 50;
 let progressLost = progressLostMax;
 setInterval(() => {
@@ -24,40 +22,28 @@ const healthHTML = document.querySelector(".health");
 let currentRanges;
 let incompleteSequence;
 
-const shuffle = (arr) => {
-  for (const i in arr) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-};
-const getRandomIndex = (arr) => Math.floor(Math.random() * arr.length);
-const newCommand = (commandsPerTurn) => {
+const newCommand = async (instructionsPerTurn) => {
   currentRanges = structuredClone(levelRanges);
-  let commandsShuffledIndices = invoke("get_shuffled_indices", {
-    length: currentLevel.commands.length,
-  }).then((indices) => {
-    return indices;
+  let instructionsShuffledIndices = await invoke("get_shuffled_indices", {
+    length: currentLevel.instructions.length,
   });
-  console.log(commandsShuffledIndices);
-  // const commandsShuffledIndices = shuffle(
-  //   Array.from(currentLevel.commands.keys())
-  // );
   let availableRanges = Array.from(currentRanges.keys());
-  for (const commandIndex of commandsShuffledIndices) {
-    const selectedCommandIndex = getRandomIndex(
-      currentLevel.commands[commandIndex]
-    );
-    const selectedRangeIndex = getRandomIndex(availableRanges);
-    const selectedButtonIndex = getRandomIndex(
-      currentRanges[selectedRangeIndex]
-    );
+  for (const instructionIndex of instructionsShuffledIndices) {
+    const selectedCommandIndex = await invoke("get_index", {
+      length: currentLevel.instructions[instructionIndex].length,
+    });
+    const selectedRangeIndex = await invoke("get_index", {
+      length: availableRanges.length,
+    });
+    const selectedButtonIndex = await invoke("get_index", {
+      length: currentRanges[selectedRangeIndex].length,
+    });
 
-    commandRowsDom[commandIndex].innerText =
+    commandRowsDom[instructionIndex].innerText =
       currentRanges[selectedRangeIndex][selectedButtonIndex] +
       (selectedRangeIndex + 1);
-    switch (currentLevel.commands[commandIndex][selectedCommandIndex]) {
-      case commandBi:
+    switch (currentLevel.instructions[instructionIndex][selectedCommandIndex]) {
+      case 'Bi':
         currentRanges[selectedRangeIndex] = [
           currentRanges[selectedRangeIndex][selectedButtonIndex],
         ];
@@ -67,21 +53,22 @@ const newCommand = (commandsPerTurn) => {
             (e) => e !== currentRanges[selectedRangeIndex][0]
           );
         }
-        commandRowsDom[commandIndex].style.border = "none";
+        commandRowsDom[instructionIndex].style.border = "none";
         break;
 
-      case commandNbi:
+      case 'Nbi':
         currentRanges[selectedRangeIndex] = currentRanges[
           selectedRangeIndex
         ].toSpliced(selectedButtonIndex, 1);
-        commandRowsDom[commandIndex].style.border = "solid";
+        commandRowsDom[instructionIndex].style.border = "solid";
         break;
     }
   }
   console.table(currentRanges);
 };
-export const fightInit = () => {
-  currentLevel = levels[chosenLevel - 1];
+export const fightInit = async () => {
+  currentLevel = await invoke("get_level", { level: chosenLevel });
+  // levels[chosenLevel - 1];
   progressLost = progressLostMax;
   incompleteSequence = [];
   levelsButtons = levelButtonsMax.slice(0, currentLevel.buttons);
@@ -89,11 +76,11 @@ export const fightInit = () => {
 
   commandRowsDom = [];
   fightContent.innerHTML = "";
-  for (let i = 0; i < currentLevel.commands.length; i++) {
+  for (let i = 0; i < currentLevel.instructions.length; i++) {
     commandRowsDom.push(document.createElement("d"));
     fightContent.appendChild(commandRowsDom[i]);
   }
-  newCommand(currentLevel.commands.length);
+  newCommand(currentLevel.instructions.length);
 };
 export const fightFn = (key) => {
   if (levelsButtons.includes(key)) {
@@ -116,7 +103,7 @@ export const fightFn = (key) => {
     } else if (progressLost < progressLostMax) progressLost += 4;
     else progressLost = progressLostMax;
     incompleteSequence = [];
-    newCommand(currentLevel.commands.length);
+    newCommand(currentLevel.instructions.length);
   }
 };
 window.addEventListener("keyup", () => (incompleteSequence = []));

@@ -2806,6 +2806,7 @@ dependencies = [
 name = "tauri_rust_game"
 version = "0.0.0"
 dependencies = [
+ "phf 0.11.2",
  "rand 0.8.5",
  "serde",
  "serde_json",

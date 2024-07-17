@@ -11,16 +11,18 @@ edition = "2021"
 tauri-build = { version = "1.5.2", features = [] }
 
 [dependencies]
-tauri = { version = "1.7.1", features = [
-    "path-all",
-    "fs-read-file",
-    "shell-open",
-] }
+tauri = { version = "1.7.1", features = [ "fs-read-file", "path-all", "shell-open"] }
 serde = { version = "1.0.204", features = ["derive"] }
 serde_json = "1.0.120"
 rand = "0.8.5"
 phf = { version = "0.11.2", features = ["macros"] }
 
+# [build_dependencies]
+# tauri-build = "1.5.3"
+
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
 custom-protocol = ["tauri/custom-protocol"]
+
+# Here insted of tauri.conf.json becouse json dons't have comments
+# "fs": { "readFile": true, "scope": ["$RESOURCE/*"] },

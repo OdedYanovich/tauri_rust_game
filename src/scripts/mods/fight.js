@@ -1,4 +1,4 @@
-import { levelsID } from "../dom.js";
+import { levelsID, selectedLevels } from "../dom.js";
 import { chosenLevel } from "./menu.js";
 
 // https://tauri.app/v1/guides/building/resources/
@@ -23,6 +23,7 @@ let currentRanges;
 let incompleteSequence;
 
 const newCommand = async (instructionsPerTurn) => {
+  // const currentLevel = await invoke("get_level2");
   currentRanges = structuredClone(levelRanges);
   let instructionsShuffledIndices = await invoke("get_shuffled_indices", {
     length: currentLevel.instructions.length,
@@ -43,7 +44,7 @@ const newCommand = async (instructionsPerTurn) => {
       currentRanges[selectedRangeIndex][selectedButtonIndex] +
       (selectedRangeIndex + 1);
     switch (currentLevel.instructions[instructionIndex][selectedCommandIndex]) {
-      case 'Bi':
+      case "Bi":
         currentRanges[selectedRangeIndex] = [
           currentRanges[selectedRangeIndex][selectedButtonIndex],
         ];
@@ -56,7 +57,7 @@ const newCommand = async (instructionsPerTurn) => {
         commandRowsDom[instructionIndex].style.border = "none";
         break;
 
-      case 'Nbi':
+      case "Nbi":
         currentRanges[selectedRangeIndex] = currentRanges[
           selectedRangeIndex
         ].toSpliced(selectedButtonIndex, 1);
@@ -68,7 +69,8 @@ const newCommand = async (instructionsPerTurn) => {
 };
 export const fightInit = async () => {
   currentLevel = await invoke("get_level", { level: chosenLevel });
-  // levels[chosenLevel - 1];
+  // await invoke("set_level", { selectedLevel: chosenLevel });
+  // const currentLevel = await invoke("get_level2");
   progressLost = progressLostMax;
   incompleteSequence = [];
   levelsButtons = levelButtonsMax.slice(0, currentLevel.buttons);
@@ -83,6 +85,7 @@ export const fightInit = async () => {
   newCommand(currentLevel.instructions.length);
 };
 export const fightFn = (key) => {
+  // const currentLevel = await invoke("get_level2");
   if (levelsButtons.includes(key)) {
     incompleteSequence.push(key);
     if (incompleteSequence.length !== currentLevel.presses) return;

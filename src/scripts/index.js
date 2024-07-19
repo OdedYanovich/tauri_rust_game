@@ -69,7 +69,7 @@ const keyToMod = {
   a: soundID,
   z: exitID,
 };
-window.addEventListener("keydown", (event) => {
+window.addEventListener("keydown", async(event) => {
   let key = event.key.toLowerCase();
   let mod_associated_with_current_press = keyToMod[key];
   if (mod_associated_with_current_press) {
@@ -80,8 +80,8 @@ window.addEventListener("keydown", (event) => {
     }
     return;
   }
-  const modRequestedTransition = menuMod.fn(key);
-  if (modRequestedTransition) menuMod.set(modRequestedTransition);
+  const modRequestedTransition = await menuMod.fn(key);
+  if (modRequestedTransition)  menuMod.set(modRequestedTransition);
 });
 
 const currentLevel = 36;

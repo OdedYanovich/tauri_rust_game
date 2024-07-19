@@ -23,22 +23,26 @@ let currentRanges;
 let incompleteSequence;
 
 const newCommand = async (instructionsPerTurn) => {
-  // const currentLevel = await invoke("get_level2");
   currentRanges = structuredClone(levelRanges);
   let instructionsShuffledIndices = await invoke("get_shuffled_indices", {
     length: currentLevel.instructions.length,
   });
   let availableRanges = Array.from(currentRanges.keys());
   for (const instructionIndex of instructionsShuffledIndices) {
-    const selectedCommandIndex = await invoke("get_index", {
-      length: currentLevel.instructions[instructionIndex].length,
-    });
-    const selectedRangeIndex = await invoke("get_index", {
-      length: availableRanges.length,
-    });
-    const selectedButtonIndex = await invoke("get_index", {
-      length: currentRanges[selectedRangeIndex].length,
-    });
+    // const selectedCommandIndex = await invoke("get_index", {
+    //   length: currentLevel.instructions[instructionIndex].length,
+    // });
+    // const selectedRangeIndex = await invoke("get_index", {
+    //   length: availableRanges.length,
+    // });
+    // const selectedButtonIndex = await invoke("get_index", {
+    //   length: currentRanges[selectedRangeIndex].length,
+    // });
+    const [selectedCommandIndex, selectedRangeIndex, selectedButtonIndex] =
+      await invoke("selected_correct_actions", {
+        availableRangesLen: availableRanges.length,
+        currentRanges: currentRanges,
+      });
 
     commandRowsDom[instructionIndex].innerText =
       currentRanges[selectedRangeIndex][selectedButtonIndex] +
@@ -65,12 +69,11 @@ const newCommand = async (instructionsPerTurn) => {
         break;
     }
   }
-  console.table(currentRanges);
+  console.table(currentRanges); //Debug
 };
 export const fightInit = async () => {
-  currentLevel = await invoke("get_level", { level: chosenLevel });
-  // await invoke("set_level", { selectedLevel: chosenLevel });
-  // const currentLevel = await invoke("get_level2");
+  await invoke("set_level", { selectedLevel: chosenLevel });
+  currentLevel = await invoke("get_level");
   progressLost = progressLostMax;
   incompleteSequence = [];
   levelsButtons = levelButtonsMax.slice(0, currentLevel.buttons);
@@ -84,8 +87,7 @@ export const fightInit = async () => {
   }
   newCommand(currentLevel.instructions.length);
 };
-export const fightFn = (key) => {
-  // const currentLevel = await invoke("get_level2");
+export const fightFn = async (key) => {
   if (levelsButtons.includes(key)) {
     incompleteSequence.push(key);
     if (incompleteSequence.length !== currentLevel.presses) return;

@@ -64,7 +64,6 @@ export const fightInit = async () => {
   progressLost = progressLostMax;
   incompleteSequence = [];
   await invoke("set_buttons", { length: currentLevel.buttons });
-  await invoke("get_buttons", { length: currentLevel.buttons });
   levelRanges = Array(currentLevel.presses).fill(
     await invoke("get_buttons", { length: currentLevel.buttons })
   );

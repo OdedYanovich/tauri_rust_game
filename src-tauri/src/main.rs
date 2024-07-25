@@ -1,6 +1,5 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-
 mod levels;
 #[tauri::command]
 fn get_shuffled_indices(length: u8) -> Vec<u8> {
@@ -9,13 +8,12 @@ fn get_shuffled_indices(length: u8) -> Vec<u8> {
     vec.shuffle(&mut thread_rng());
     vec
 }
-
 // #[tauri::command]
 // fn execute_instruction(instruction: PlayerInstruction) {}
 fn main() {
     use levels::{
         get_buttons, get_level, get_unused_initial_value, selected_correct_actions, set_buttons,
-        set_level,PROGRESS_LOST_MAX
+        set_level, PROGRESS_LOST_MAX,
     };
     // let current_level = Arc::new(Mutex::new(get_level(1)));
     tauri::Builder::default()
@@ -28,7 +26,7 @@ fn main() {
             set_level,
             selected_correct_actions,
             get_buttons,
-            set_buttons,
+            set_buttons
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -1,4 +1,5 @@
 import { levelButtons } from "./mods/menu.js";
+const { invoke } = window.__TAURI__.tauri;
 export const levelsID = 1;
 export const soundID = 2;
 export const exitID = 3;

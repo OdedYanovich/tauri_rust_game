@@ -19,6 +19,7 @@ let currentRanges;
 let incompleteSequence;
 
 const newCommand = async (instructionsPerTurn) => {
+  console.log(await invoke('new_command'));
   currentRanges = structuredClone(levelRanges);
   let instructionsShuffledIndices = await invoke("get_shuffled_indices", {
     length: currentLevel.instructions.length,

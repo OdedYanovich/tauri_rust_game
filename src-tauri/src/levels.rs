@@ -1,15 +1,11 @@
 use phf::{phf_map, Map};
-use std::sync::Mutex;
 use PlayerInstruction::*;
-pub type StateWrapper<'a, T> = tauri::State<'a, Mutex<T>>;
-/// The starting values of managed states are not used
-pub fn get_unused_initial_value<T>(something: T) -> Mutex<T> {
-    return unsafe { std::mem::transmute::<Mutex<T>, Mutex<T>>(Mutex::new(something)) };
-}
+pub type StateWrapper<'a, T> = tauri::State<'a, std::sync::Mutex<T>>;
+
 pub const PROGRESS_LOST_MAX: u16 = 50;
 // https://serde.rs/enum-number.html
-#[derive(serde::Serialize)]
-enum PlayerInstruction {
+#[derive(serde::Serialize, Clone, Copy)]
+pub enum PlayerInstruction {
     Bi,
     Nbi,
     //     B0b,
@@ -45,6 +41,13 @@ pub fn set_level(selected_level: u8, current_level: StateWrapper<u8>) {
     *current_level.lock().unwrap() = selected_level;
 }
 
+#[tauri::command]
+pub fn get_shuffled_indices(length: u8) -> Vec<u8> {
+    use rand::{seq::SliceRandom, thread_rng};
+    let mut vec: Vec<u8> = (0..length).collect();
+    vec.shuffle(&mut thread_rng());
+    vec
+}
 pub fn get_index(length: usize) -> usize {
     use rand::Rng;
     rand::thread_rng().gen_range(0..length)
@@ -65,7 +68,49 @@ pub fn selected_correct_actions(
     ]
 }
 const LEVEL_BUTTONS_MAX: [char; 5] = ['f', 'g', 'h', 'j', 'k'];
-
+#[tauri::command]
+pub fn new_command(
+    current_level: StateWrapper<u8>,
+    turns_ranges: StateWrapper<Vec<Vec<char>>>,
+) -> Vec<(PlayerInstruction, char, u8)> {
+    use rand::seq::SliceRandom;
+    let current_level = get_level(current_level);
+    let mut current_ranges = vec![
+        LEVEL_BUTTONS_MAX[0..(current_level.buttons as usize)].to_vec();
+        current_level.presses as usize
+    ];
+    let ranges_shuffled_indices = get_shuffled_indices(current_level.instructions.len() as u8);
+    let mut dom_data = Vec::new();
+    for (i, potential_instruction) in current_level.instructions.iter().enumerate() {
+        let instruction = &potential_instruction[get_index(potential_instruction.len())];
+        let selected_button = *current_ranges[ranges_shuffled_indices[i] as usize]
+            .choose(&mut rand::thread_rng())
+            .unwrap();
+        match *instruction {
+            Bi => {
+                let _ = current_ranges.iter_mut().enumerate().map(|(index, range)| {
+                    if index as u8 != ranges_shuffled_indices[i] {
+                        let _ = range.iter().filter(|button| **button != selected_button);
+                    } else {
+                        *range = vec![selected_button]
+                    }
+                });
+            }
+            Nbi => {
+                let _ = current_ranges[ranges_shuffled_indices[i] as usize]
+                    .iter()
+                    .filter(|button| **button != selected_button);
+            }
+        }
+        dom_data.push((
+            *instruction,
+            selected_button,
+            ranges_shuffled_indices[i] + 1,
+        ));
+    }
+    *turns_ranges.lock().unwrap() = current_ranges;
+    dom_data
+}
 #[tauri::command]
 pub fn set_buttons(length: usize, current_buttons: StateWrapper<&[char]>) {
     *current_buttons.lock().unwrap() = &(LEVEL_BUTTONS_MAX[0..length]);

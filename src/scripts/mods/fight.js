@@ -1,5 +1,5 @@
-import { levelsID, selectedLevels } from "../dom.js";
-import { chosenLevel } from "./menu.js";
+import { levelsID } from "../dom.js";
+import { chosenLevel } from "./levels.js";
 
 const { invoke } = window.__TAURI__.tauri;
 const progressLostMax = 50;
@@ -19,7 +19,7 @@ let currentRanges;
 let incompleteSequence;
 
 const newCommand = async (instructionsPerTurn) => {
-  console.log(await invoke('new_command'));
+  console.log(await invoke("new_command"));
   currentRanges = structuredClone(levelRanges);
   let instructionsShuffledIndices = await invoke("get_shuffled_indices", {
     length: currentLevel.instructions.length,
@@ -78,31 +78,25 @@ export const fightInit = async () => {
   newCommand(currentLevel.instructions.length);
 };
 export const fightFn = async (key) => {
-  if (
-    (await invoke("get_buttons", { length: currentLevel.buttons })).includes(
-      key
-    )
-  ) {
-    incompleteSequence.push(key);
-    if (incompleteSequence.length !== currentLevel.presses) return;
-    let result = true;
-    for (let index = 0; index < currentLevel.presses; index++) {
-      if (
-        currentRanges[index].find(
-          (element) => element === incompleteSequence[index]
-        ) === undefined
-      ) {
-        result = false;
-        break;
-      }
+  incompleteSequence.push(key);
+  if (incompleteSequence.length !== currentLevel.presses) return;
+  let result = true;
+  for (let index = 0; index < currentLevel.presses; index++) {
+    if (
+      currentRanges[index].find(
+        (element) => element === incompleteSequence[index]
+      ) === undefined
+    ) {
+      result = false;
+      break;
     }
-    if (result) {
-      progressLost -= 4;
-      if (progressLost < 0) return levelsID;
-    } else if (progressLost < progressLostMax) progressLost += 4;
-    else progressLost = progressLostMax;
-    incompleteSequence = [];
-    newCommand(currentLevel.instructions.length);
   }
+  if (result) {
+    progressLost -= 4;
+    if (progressLost < 0) return levelsID;
+  } else if (progressLost < progressLostMax) progressLost += 4;
+  else progressLost = progressLostMax;
+  incompleteSequence = [];
+  newCommand(currentLevel.instructions.length);
 };
 window.addEventListener("keyup", () => (incompleteSequence = []));

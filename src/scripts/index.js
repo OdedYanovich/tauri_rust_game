@@ -1,11 +1,8 @@
 import { fightFn, fightInit } from "./mods/fight.js";
-import {
-  levelsFn,
-  soundFn,
-  exitFn,
-  creditFn,
-  isTableFull,
-} from "./mods/menu.js";
+import { creditFn, creditKeys } from "./mods/credit.js";
+import { exitFn, exitKeys } from "./mods/exit.js";
+import { soundFn, soundKeys } from "./mods/sound.js";
+import { levelsFn, isTableFull, levelKeys } from "./mods/levels.js";
 import {
   levels,
   sound,
@@ -15,9 +12,8 @@ import {
   exitID,
   creditID,
   fightID,
-  allLevels,
-  selectedLevels,
 } from "./dom.js";
+const { invoke } = window.__TAURI__.tauri;
 
 const sideOptionText = [levels, sound, exit];
 const content = [
@@ -69,7 +65,7 @@ const keyToMod = {
   a: soundID,
   z: exitID,
 };
-window.addEventListener("keydown", async(event) => {
+window.addEventListener("keydown", async (event) => {
   let key = event.key.toLowerCase();
   let mod_associated_with_current_press = keyToMod[key];
   if (mod_associated_with_current_press) {
@@ -80,9 +76,17 @@ window.addEventListener("keydown", async(event) => {
     }
     return;
   }
-  const modRequestedTransition = await menuMod.fn(key);
-  if (modRequestedTransition)  menuMod.set(modRequestedTransition);
+  const modKeys = [
+    levelKeys,
+    soundKeys,
+    exitKeys,
+    creditKeys,
+    await invoke("get_buttons"),
+  ];
+  if (modKeys[menuMod.current - 1].includes(key)) {
+    const modRequestedTransition = await menuMod.fn(key);
+    if (modRequestedTransition) menuMod.set(modRequestedTransition);
+  }
 });
 
-const currentLevel = 36;
 // setAttribute;

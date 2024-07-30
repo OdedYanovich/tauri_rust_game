@@ -1,5 +1,5 @@
-import { levelButtons } from "./mods/menu.js";
-const { invoke } = window.__TAURI__.tauri;
+import { levelButtons } from "./mods/levels.js";
+// const { invoke } = window.__TAURI__.tauri;
 export const levelsID = 1;
 export const soundID = 2;
 export const exitID = 3;
@@ -49,9 +49,10 @@ let soundOptionsDisplayHTML = ``;
 });
 
 menu.querySelector("#SoundTable").innerHTML = soundOptionsDisplayHTML;
-let levelsFullGridContent = levelButtons.map((v) => {
-  return v.toLocaleUpperCase();
-});
+let levelsFullGridContent = levelButtons //.slice(0, 6)
+  .map((v) => {
+    return v.toLocaleUpperCase();
+  });
 for (let index = 1; index < 37; index++) levelsFullGridContent.push(index);
 let levelsFullGrid = "";
 levelsFullGridContent.forEach((v) => {

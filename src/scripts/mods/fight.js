@@ -1,7 +1,13 @@
 import { levelsID } from "../dom.js";
 import { chosenLevel } from "./levels.js";
+import {
+  getButtons,
+  getLevel,
+  getShuffledIndices,
+  new_command,
+  selectedCorrectActions,
+} from "../interop.js";
 
-const { invoke } = window.__TAURI__.tauri;
 const progressLostMax = 50;
 let progressLost = progressLostMax;
 setInterval(() => {
@@ -19,18 +25,19 @@ let currentRanges;
 let incompleteSequence;
 
 const newCommand = async (instructionsPerTurn) => {
-  console.log(await invoke("new_command"));
+  console.log(await new_command(chosenLevel));
   currentRanges = structuredClone(levelRanges);
-  let instructionsShuffledIndices = await invoke("get_shuffled_indices", {
-    length: currentLevel.instructions.length,
-  });
+  let instructionsShuffledIndices = await getShuffledIndices(
+    currentLevel.instructions.length
+  );
   let availableRanges = Array.from(currentRanges.keys());
   for (const instructionIndex of instructionsShuffledIndices) {
     const [selectedCommandIndex, selectedRangeIndex, selectedButtonIndex] =
-      await invoke("selected_correct_actions", {
-        currentRangers: currentRanges,
-        availableRangersLen: availableRanges.length,
-      });
+      await selectedCorrectActions(
+        currentRanges,
+        availableRanges.length,
+        chosenLevel
+      );
 
     commandRowsDom[instructionIndex].innerText =
       currentRanges[selectedRangeIndex][selectedButtonIndex] +
@@ -60,13 +67,11 @@ const newCommand = async (instructionsPerTurn) => {
   // console.table(currentRanges); //Debug
 };
 export const fightInit = async () => {
-  await invoke("set_level", { selectedLevel: chosenLevel });
-  currentLevel = await invoke("get_level");
+  currentLevel = await getLevel(chosenLevel);
   progressLost = progressLostMax;
   incompleteSequence = [];
-  await invoke("set_buttons", { length: currentLevel.buttons });
   levelRanges = Array(currentLevel.presses).fill(
-    await invoke("get_buttons", { length: currentLevel.buttons })
+    await getButtons(currentLevel.buttons)
   );
 
   commandRowsDom = [];

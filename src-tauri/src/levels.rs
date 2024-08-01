@@ -17,7 +17,7 @@ pub struct Level {
     presses: u8,
     instructions: &'static [&'static [PlayerInstruction]],
 }
-static LEVELS: Map<u8, Level> = phf_map! {
+const LEVELS: Map<u8, Level> = phf_map! {
     1u8  => Level{buttons:2,presses:1,instructions:&[&[Bi]]},
     2u8  => Level{buttons:2,presses:1,instructions:&[&[Nbi]]},
     3u8  => Level{buttons:2,presses:1,instructions:&[&[Bi,Nbi]]},
@@ -32,13 +32,8 @@ static LEVELS: Map<u8, Level> = phf_map! {
     12u8 => Level{buttons:3,presses:2,instructions:&[&[Nbi],&[Nbi]]},
 };
 #[tauri::command]
-pub fn get_level(current_level: StateWrapper<u8>) -> &Level {
-    &(LEVELS[&*current_level.lock().unwrap()])
-}
-
-#[tauri::command]
-pub fn set_level(selected_level: u8, current_level: StateWrapper<u8>) {
-    *current_level.lock().unwrap() = selected_level;
+pub fn get_level<'a>(level_index: u8) -> &'a Level {
+    &(LEVELS[&level_index])
 }
 
 #[tauri::command]
@@ -48,6 +43,7 @@ pub fn get_shuffled_indices(length: u8) -> Vec<u8> {
     vec.shuffle(&mut thread_rng());
     vec
 }
+
 pub fn get_index(length: usize) -> usize {
     use rand::Rng;
     rand::thread_rng().gen_range(0..length)
@@ -56,9 +52,9 @@ pub fn get_index(length: usize) -> usize {
 pub fn selected_correct_actions(
     current_rangers: Vec<Vec<String>>,
     available_rangers_len: usize,
-    current_level: StateWrapper<u8>,
+    level_index: u8,
 ) -> [usize; 3] {
-    let selected_command_index = get_index(get_level(current_level).instructions.len());
+    let selected_command_index = get_index(get_level(level_index).instructions.len());
     let selected_range_index = get_index(available_rangers_len);
     let selected_button_index = get_index(current_rangers[selected_range_index].len());
     [
@@ -70,11 +66,11 @@ pub fn selected_correct_actions(
 const LEVEL_BUTTONS_MAX: [char; 5] = ['f', 'g', 'h', 'j', 'k'];
 #[tauri::command]
 pub fn new_command(
-    current_level: StateWrapper<u8>,
     turns_ranges: StateWrapper<Vec<Vec<char>>>,
+    level_index: u8,
 ) -> Vec<(PlayerInstruction, char, u8)> {
     use rand::seq::SliceRandom;
-    let current_level = get_level(current_level);
+    let current_level = get_level(level_index);
     let mut current_ranges = vec![
         LEVEL_BUTTONS_MAX[0..(current_level.buttons as usize)].to_vec();
         current_level.presses as usize
@@ -111,11 +107,29 @@ pub fn new_command(
     *turns_ranges.lock().unwrap() = current_ranges;
     dom_data
 }
+
 #[tauri::command]
-pub fn set_buttons(length: usize, current_buttons: StateWrapper<&[char]>) {
-    *current_buttons.lock().unwrap() = &(LEVEL_BUTTONS_MAX[0..length]);
+pub fn get_buttons<'a>(length: usize) -> &'a [char] {
+    &(LEVEL_BUTTONS_MAX[0..length])
+}
+
+#[tauri::command]
+pub fn get_buttons_string<'a>() -> &'a str {
+    stringify!(get_buttons)
 }
 #[tauri::command]
-pub fn get_buttons<'a>(current_buttons: StateWrapper<&[char]>) -> &'a [char] {
-    *current_buttons.lock().unwrap()
+pub fn new_command_string<'a>() -> &'a str {
+    stringify!(new_command)
+}
+#[tauri::command]
+pub fn selected_correct_actions_string<'a>() -> &'a str {
+    stringify!(selected_correct_actions)
+}
+#[tauri::command]
+pub fn get_shuffled_indices_string<'a>() -> &'a str {
+    stringify!(get_shuffled_indices)
+}
+#[tauri::command]
+pub fn get_level_string<'a>() -> &'a str {
+    stringify!(get_level)
 }

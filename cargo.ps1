@@ -1,3 +1,3 @@
 Set-Location src-tauri
-cargo clippy
+cargo $args[0] $args[1]
 Set-Location ..

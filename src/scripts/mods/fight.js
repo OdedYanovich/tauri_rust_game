@@ -1,4 +1,4 @@
-import { levelsID } from "../dom.js";
+import { levelsID, wrapElement } from "../dom.js";
 import { chosenLevel } from "./levels.js";
 import {
   getButtons,
@@ -25,45 +25,57 @@ let currentRanges;
 let incompleteSequence;
 
 const newCommand = async (instructionsPerTurn) => {
-  console.log(await new_command(chosenLevel));
-  currentRanges = structuredClone(levelRanges);
-  let instructionsShuffledIndices = await getShuffledIndices(
-    currentLevel.instructions.length
-  );
-  let availableRanges = Array.from(currentRanges.keys());
-  for (const instructionIndex of instructionsShuffledIndices) {
-    const [selectedCommandIndex, selectedRangeIndex, selectedButtonIndex] =
-      await selectedCorrectActions(
-        currentRanges,
-        availableRanges.length,
-        chosenLevel
-      );
-
-    commandRowsDom[instructionIndex].innerText =
-      currentRanges[selectedRangeIndex][selectedButtonIndex] +
-      (selectedRangeIndex + 1);
-    switch (currentLevel.instructions[instructionIndex][selectedCommandIndex]) {
+  let commandData = await new_command(chosenLevel);
+  for (const instructions in commandData) {
+    switch (commandData[instructions][0]) {
       case "Bi":
-        currentRanges[selectedRangeIndex] = [
-          currentRanges[selectedRangeIndex][selectedButtonIndex],
-        ];
-        availableRanges = availableRanges.toSpliced(selectedRangeIndex, 1); //.splice(selectedRangeIndex, 1); //
-        for (let rangeIndex of availableRanges) {
-          currentRanges[rangeIndex] = currentRanges[rangeIndex].filter(
-            (e) => e !== currentRanges[selectedRangeIndex][0]
-          );
-        }
-        commandRowsDom[instructionIndex].style.border = "none";
+        commandRowsDom[instructions].style.border = "none";
         break;
 
       case "Nbi":
-        currentRanges[selectedRangeIndex] = currentRanges[
-          selectedRangeIndex
-        ].toSpliced(selectedButtonIndex, 1);
-        commandRowsDom[instructionIndex].style.border = "solid";
+        commandRowsDom[instructions].style.border = "solid";
         break;
     }
+    commandRowsDom[instructions].innerHTML += wrapElement(commandData[instructions][1]);
+    commandRowsDom[instructions].innerHTML += wrapElement(commandData[instructions][2]);
   }
+  // currentRanges = structuredClone(levelRanges);
+  // let instructionsShuffledIndices = await getShuffledIndices(
+  //   currentLevel.instructions.length
+  // );
+  // let availableRanges = Array.from(currentRanges.keys());
+  // for (const instructionIndex of instructionsShuffledIndices) {
+  //   const [selectedCommandIndex, selectedRangeIndex, selectedButtonIndex] =
+  //     await selectedCorrectActions(
+  //       currentRanges,
+  //       availableRanges.length,
+  //       chosenLevel
+  //     );
+  //   commandRowsDom[instructionIndex].innerText =
+  //     currentRanges[selectedRangeIndex][selectedButtonIndex] +
+  //     (selectedRangeIndex + 1);
+  //   switch (currentLevel.instructions[instructionIndex][selectedCommandIndex]) {
+  //     case "Bi":
+  //       currentRanges[selectedRangeIndex] = [
+  //         currentRanges[selectedRangeIndex][selectedButtonIndex],
+  //       ];
+  //       availableRanges = availableRanges.toSpliced(selectedRangeIndex, 1); //.splice(selectedRangeIndex, 1); //
+  //       for (let rangeIndex of availableRanges) {
+  //         currentRanges[rangeIndex] = currentRanges[rangeIndex].filter(
+  //           (e) => e !== currentRanges[selectedRangeIndex][0]
+  //         );
+  //       }
+  //       commandRowsDom[instructionIndex].style.border = "none";
+  //       break;
+  //     case "Nbi":
+  //       currentRanges[selectedRangeIndex] = currentRanges[
+  //         selectedRangeIndex
+  //       ].toSpliced(selectedButtonIndex, 1);
+  //       commandRowsDom[instructionIndex].style.border = "solid";
+  //       break;
+  //   }
+  // }
+
   // console.table(currentRanges); //Debug
 };
 export const fightInit = async () => {

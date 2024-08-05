@@ -36,15 +36,14 @@ pub fn get_level<'a>(level_index: u8) -> &'a Level {
     &(LEVELS[&level_index])
 }
 
-#[tauri::command]
-pub fn get_shuffled_indices(length: u8) -> Vec<u8> {
+fn get_shuffled_indices(length: u8) -> Vec<u8> {
     use rand::{seq::SliceRandom, thread_rng};
     let mut vec: Vec<u8> = (0..length).collect();
     vec.shuffle(&mut thread_rng());
     vec
 }
 
-pub fn get_index(length: usize) -> usize {
+fn get_index(length: usize) -> usize {
     use rand::Rng;
     rand::thread_rng().gen_range(0..length)
 }
@@ -109,6 +108,14 @@ pub fn new_command(
 }
 
 #[tauri::command]
+pub fn fight_step(turns_ranges: StateWrapper<Vec<Vec<char>>>, player_sequence: Vec<char>) {
+    for i in turns_ranges.lock().iter() {}
+    // turns_ranges.
+    // for (range, button) in turns_ranges.lock().iter().zip(player_sequence.iter()) {
+    //     if range.iter().any(|range_button|range_button==button){}
+    // }
+}
+#[tauri::command]
 pub fn get_buttons<'a>(length: usize) -> &'a [char] {
     &(LEVEL_BUTTONS_MAX[0..length])
 }
@@ -124,10 +131,6 @@ pub fn new_command_string<'a>() -> &'a str {
 #[tauri::command]
 pub fn selected_correct_actions_string<'a>() -> &'a str {
     stringify!(selected_correct_actions)
-}
-#[tauri::command]
-pub fn get_shuffled_indices_string<'a>() -> &'a str {
-    stringify!(get_shuffled_indices)
 }
 #[tauri::command]
 pub fn get_level_string<'a>() -> &'a str {

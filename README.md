@@ -9,4 +9,4 @@ This template should help get you started developing with Tauri in vanilla HTML,
 ## Commands
 
 run project on dev mod: cargo tauri dev
-run clippy: ./clippy.ps1
+run clippy: ./cargo.ps1 clippy

@@ -1,4 +1,4 @@
-const { invoke } = window.__TAURI__.tauri;
+const invoke = window.__TAURI__.core.invoke; //window.__TAURI__.tauri;
 export const getButtons = async (buttons) => {
   return await invoke(await invoke("get_buttons_string"), {
     length: buttons,

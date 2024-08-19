@@ -1,0 +1,15 @@
+#LevelsContent {
+  grid-template: repeat(7, 1fr) / repeat(7, 1fr);
+}
+#allLevels {
+  grid-auto-flow: column;
+  grid-template-rows: subgrid;
+  grid-template-columns: subgrid;
+  grid-row: 2/8;
+  grid-column: 1/8;
+}
+#selectedLevels {
+  grid-template-rows: subgrid;
+  grid-template-columns: subgrid;
+  grid-column: 1/8;
+}

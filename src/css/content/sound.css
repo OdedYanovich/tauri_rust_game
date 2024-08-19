@@ -1,0 +1,8 @@
+#volume {
+  grid-row: 1/3;
+  font-size: 5rem;
+}
+#SoundTable {
+  grid-row: 3;
+  grid-template: 1fr 1fr / repeat(8, 1fr);
+}

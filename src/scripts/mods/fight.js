@@ -3,9 +3,7 @@ import { chosenLevel } from "./levels.js";
 import {
   getButtons,
   getLevel,
-  getShuffledIndices,
   new_command,
-  selectedCorrectActions,
 } from "../interop.js";
 
 const progressLostMax = 50;
@@ -39,43 +37,6 @@ const newCommand = async (instructionsPerTurn) => {
     commandRowsDom[instructions].innerHTML += wrapElement(commandData[instructions][1]);
     commandRowsDom[instructions].innerHTML += wrapElement(commandData[instructions][2]);
   }
-  // currentRanges = structuredClone(levelRanges);
-  // let instructionsShuffledIndices = await getShuffledIndices(
-  //   currentLevel.instructions.length
-  // );
-  // let availableRanges = Array.from(currentRanges.keys());
-  // for (const instructionIndex of instructionsShuffledIndices) {
-  //   const [selectedCommandIndex, selectedRangeIndex, selectedButtonIndex] =
-  //     await selectedCorrectActions(
-  //       currentRanges,
-  //       availableRanges.length,
-  //       chosenLevel
-  //     );
-  //   commandRowsDom[instructionIndex].innerText =
-  //     currentRanges[selectedRangeIndex][selectedButtonIndex] +
-  //     (selectedRangeIndex + 1);
-  //   switch (currentLevel.instructions[instructionIndex][selectedCommandIndex]) {
-  //     case "Bi":
-  //       currentRanges[selectedRangeIndex] = [
-  //         currentRanges[selectedRangeIndex][selectedButtonIndex],
-  //       ];
-  //       availableRanges = availableRanges.toSpliced(selectedRangeIndex, 1); //.splice(selectedRangeIndex, 1); //
-  //       for (let rangeIndex of availableRanges) {
-  //         currentRanges[rangeIndex] = currentRanges[rangeIndex].filter(
-  //           (e) => e !== currentRanges[selectedRangeIndex][0]
-  //         );
-  //       }
-  //       commandRowsDom[instructionIndex].style.border = "none";
-  //       break;
-  //     case "Nbi":
-  //       currentRanges[selectedRangeIndex] = currentRanges[
-  //         selectedRangeIndex
-  //       ].toSpliced(selectedButtonIndex, 1);
-  //       commandRowsDom[instructionIndex].style.border = "solid";
-  //       break;
-  //   }
-  // }
-
   // console.table(currentRanges); //Debug
 };
 export const fightInit = async () => {

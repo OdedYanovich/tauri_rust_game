@@ -1,0 +1,5 @@
+/* All of the buttons should be defined only in a js file */
+#Credit {
+  grid-column: 2;
+  grid-row: var(--credit);
+}

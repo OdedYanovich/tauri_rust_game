@@ -2,7 +2,7 @@ use phf::{phf_map, Map};
 use PlayerInstruction::*;
 pub type StateWrapper<'a, T> = tauri::State<'a, std::sync::Mutex<T>>;
 
-pub const PROGRESS_LOST_MAX: u16 = 50;
+pub const PROGRESS_LOST_MAX: u8 = 50;
 // https://serde.rs/enum-number.html
 #[derive(serde::Serialize, Clone, Copy)]
 pub enum PlayerInstruction {
@@ -31,10 +31,11 @@ const LEVELS: Map<u8, Level> = phf_map! {
     11u8 => Level{buttons:3,presses:2,instructions:&[&[Bi],&[Bi]]},
     12u8 => Level{buttons:3,presses:2,instructions:&[&[Nbi],&[Nbi]]},
 };
-#[tauri::command]
 pub fn get_level<'a>(level_index: u8) -> &'a Level {
     &(LEVELS[&level_index])
 }
+
+pub struct LevelID(pub u8);
 
 fn get_shuffled_indices(length: u8) -> Vec<u8> {
     use rand::{seq::SliceRandom, thread_rng};
@@ -47,21 +48,22 @@ fn get_index(length: usize) -> usize {
     use rand::Rng;
     rand::thread_rng().gen_range(0..length)
 }
-#[tauri::command]
-pub fn selected_correct_actions(
-    current_rangers: Vec<Vec<String>>,
-    available_rangers_len: usize,
-    level_index: u8,
-) -> [usize; 3] {
-    let selected_command_index = get_index(get_level(level_index).instructions.len());
-    let selected_range_index = get_index(available_rangers_len);
-    let selected_button_index = get_index(current_rangers[selected_range_index].len());
-    [
-        selected_command_index,
-        selected_range_index,
-        selected_button_index,
-    ]
-}
+// #[tauri::command]
+// pub fn selected_correct_actions(
+//     current_rangers: Vec<Vec<String>>,
+//     available_rangers_len: usize,
+//     level_index: u8,
+// ) -> [usize; 3] {
+//     let selected_command_index = get_index(get_level(level_index).instructions.len());
+//     let selected_range_index = get_index(available_rangers_len);
+//     let selected_button_index = get_index(current_rangers[selected_range_index].len());
+//     [
+//         selected_command_index,
+//         selected_range_index,
+//         selected_button_index,
+//     ]
+// }
+
 const LEVEL_BUTTONS_MAX: [char; 5] = ['f', 'g', 'h', 'j', 'k'];
 #[tauri::command]
 pub fn new_command(
@@ -119,4 +121,3 @@ pub fn fight_step(turns_ranges: StateWrapper<Vec<Vec<char>>>, player_sequence: V
 pub fn get_buttons<'a>(length: usize) -> &'a [char] {
     &(LEVEL_BUTTONS_MAX[0..length])
 }
-

@@ -1,4 +1,5 @@
 import { fightID, allLevels, selectedLevels, wrapElement } from "../dom.js";
+import { setLevel } from "../interop.js";
 
 export let chosenLevel = 0;
 export const levelKeys = ["w", "s", "x", "e", "d", "c", "r"];
@@ -20,6 +21,7 @@ export const levelsFn = (key) => {
   if (chosenLevelIndex === -1) return false;
   if (chosenLevel !== 0) {
     chosenLevel += 6 * chosenLevelIndex;
+    setLevel(chosenLevel);
     return fightID;
   }
   isTableFull(false);

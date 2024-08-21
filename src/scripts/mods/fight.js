@@ -2,8 +2,11 @@ import { levelsID, wrapElement } from "../dom.js";
 import { chosenLevel } from "./levels.js";
 import {
   getButtons,
-  getLevel,
+  // getLevel,
   new_command,
+  initFight,
+  create_commands,
+  check_player_action,
 } from "../interop.js";
 
 const progressLostMax = 50;
@@ -23,6 +26,7 @@ let currentRanges;
 let incompleteSequence;
 
 const newCommand = async (instructionsPerTurn) => {
+  await create_commands();
   let commandData = await new_command(chosenLevel);
   for (const instructions in commandData) {
     switch (commandData[instructions][0]) {
@@ -34,12 +38,17 @@ const newCommand = async (instructionsPerTurn) => {
         commandRowsDom[instructions].style.border = "solid";
         break;
     }
-    commandRowsDom[instructions].innerHTML += wrapElement(commandData[instructions][1]);
-    commandRowsDom[instructions].innerHTML += wrapElement(commandData[instructions][2]);
+    commandRowsDom[instructions].innerHTML += wrapElement(
+      commandData[instructions][1]
+    );
+    commandRowsDom[instructions].innerHTML += wrapElement(
+      commandData[instructions][2]
+    );
   }
   // console.table(currentRanges); //Debug
 };
 export const fightInit = async () => {
+  await initFight();
   currentLevel = await getLevel(chosenLevel);
   progressLost = progressLostMax;
   incompleteSequence = [];
@@ -58,17 +67,18 @@ export const fightInit = async () => {
 export const fightFn = async (key) => {
   incompleteSequence.push(key);
   if (incompleteSequence.length !== currentLevel.presses) return;
-  let result = true;
-  for (let index = 0; index < currentLevel.presses; index++) {
-    if (
-      currentRanges[index].find(
-        (element) => element === incompleteSequence[index]
-      ) === undefined
-    ) {
-      result = false;
-      break;
-    }
-  }
+  let result = await check_player_action(incompleteSequence);
+  // let result = true;
+  // for (let index = 0; index < currentLevel.presses; index++) {
+  //   if (
+  //     currentRanges[index].find(
+  //       (element) => element === incompleteSequence[index]
+  //     ) === undefined
+  //   ) {
+  //     result = false;
+  //     break;
+  //   }
+  // }
   if (result) {
     progressLost -= 4;
     if (progressLost < 0) return levelsID;

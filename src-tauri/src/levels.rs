@@ -1,6 +1,6 @@
+use crate::TauriStateWrapper;
 use phf::{phf_map, Map};
 use PlayerInstruction::*;
-pub type StateWrapper<'a, T> = tauri::State<'a, std::sync::Mutex<T>>;
 
 pub const PROGRESS_LOST_MAX: u8 = 50;
 // https://serde.rs/enum-number.html
@@ -35,7 +35,6 @@ pub fn get_level<'a>(level_index: u8) -> &'a Level {
     &(LEVELS[&level_index])
 }
 
-pub struct LevelID(pub u8);
 
 fn get_shuffled_indices(length: u8) -> Vec<u8> {
     use rand::{seq::SliceRandom, thread_rng};
@@ -67,7 +66,7 @@ fn get_index(length: usize) -> usize {
 const LEVEL_BUTTONS_MAX: [char; 5] = ['f', 'g', 'h', 'j', 'k'];
 #[tauri::command]
 pub fn new_command(
-    turns_ranges: StateWrapper<Vec<Vec<char>>>,
+    turns_ranges: TauriStateWrapper<Vec<Vec<char>>>,
     level_index: u8,
 ) -> Vec<(PlayerInstruction, char, u8)> {
     use rand::seq::SliceRandom;
@@ -109,14 +108,6 @@ pub fn new_command(
     dom_data
 }
 
-#[tauri::command]
-pub fn fight_step(turns_ranges: StateWrapper<Vec<Vec<char>>>, player_sequence: Vec<char>) {
-    for i in turns_ranges.lock().iter() {}
-    // turns_ranges.``
-    // for (range, button) in turns_ranges.lock().iter().zip(player_sequence.iter()) {
-    //     if range.iter().any(|range_button|range_button==button){}
-    // }
-}
 #[tauri::command]
 pub fn get_buttons<'a>(length: usize) -> &'a [char] {
     &(LEVEL_BUTTONS_MAX[0..length])

@@ -3,7 +3,13 @@
 mod levels;
 mod mods;
 
-use levels::{fight_step, get_buttons, new_command, LevelID, PROGRESS_LOST_MAX};
+pub type TauriStateWrapper<'a, T> = tauri::State<'a, std::sync::Mutex<T>>;
+// impl<T> TauriStateWrapper<T> {
+
+// }
+
+use levels::{get_buttons, new_command, PROGRESS_LOST_MAX};
+use mods::fight::{check_player_action, create_commands, init_fight, Command};
 use mods::level_selector::set_level;
 use std::sync::Mutex;
 fn main() {
@@ -11,13 +17,16 @@ fn main() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())
         .manage(Mutex::new(PROGRESS_LOST_MAX))
-        .manage(Mutex::new(vec![vec!['a']]))
-        .manage(Mutex::new(LevelID(0)))
+        .manage(Mutex::new(vec![Command::default()]))
+        // .manage(Mutex::new(vec![vec!['a']]))
+        // .manage(Mutex::new(LevelID(0)))
         .invoke_handler(tauri::generate_handler![
             get_buttons,
             new_command,
-            fight_step,
             set_level,
+            check_player_action,
+            init_fight,
+            create_commands,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

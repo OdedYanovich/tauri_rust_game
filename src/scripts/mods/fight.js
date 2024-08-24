@@ -1,13 +1,5 @@
 import { levelsID, wrapElement } from "../dom.js";
-import { chosenLevel } from "./levels.js";
-import {
-  getButtons,
-  // getLevel,
-  new_command,
-  initFight,
-  create_commands,
-  check_player_action,
-} from "../interop.js";
+import { initFight, create_commands, check_player_action } from "../interop.js";
 
 const progressLostMax = 50;
 let progressLost = progressLostMax;
@@ -17,74 +9,61 @@ setInterval(() => {
 }, 1);
 
 const fightContent = document.querySelector("#GameContent");
-let levelRanges;
 let commandRowsDom;
-let currentLevel;
 
 const healthHTML = document.querySelector(".health");
-let currentRanges;
 let incompleteSequence;
 
-const newCommand = async (instructionsPerTurn) => {
-  await create_commands();
-  let commandData = await new_command(chosenLevel);
-  for (const instructions in commandData) {
-    switch (commandData[instructions][0]) {
+const newCommand = async () => {
+  let commands = await create_commands();
+  // console.table(commands)
+  for (const command in commands) {
+    // console.log(command);
+    // console.log(commandRowsDom[command]);
+    switch (commands[command]["command_type"]) {
       case "Bi":
-        commandRowsDom[instructions].style.border = "none";
+        commandRowsDom[command].style.borderStyle = "none";
         break;
 
       case "Nbi":
-        commandRowsDom[instructions].style.border = "solid";
+        commandRowsDom[command].style.borderStyle = "solid";
         break;
     }
-    commandRowsDom[instructions].innerHTML += wrapElement(
-      commandData[instructions][1]
-    );
-    commandRowsDom[instructions].innerHTML += wrapElement(
-      commandData[instructions][2]
-    );
+    commandRowsDom[command].innerHTML =
+      wrapElement(commands[command]["button"]) +
+      wrapElement(commands[command]["index"] + 1);
   }
-  // console.table(currentRanges); //Debug
+  // console.log(commandRowsDom); //Debug
 };
 export const fightInit = async () => {
-  await initFight();
-  currentLevel = await getLevel(chosenLevel);
-  progressLost = progressLostMax;
-  incompleteSequence = [];
-  levelRanges = Array(currentLevel.presses).fill(
-    await getButtons(currentLevel.buttons)
-  );
-
   commandRowsDom = [];
   fightContent.innerHTML = "";
-  for (let i = 0; i < currentLevel.instructions.length; i++) {
+  for (let i = 0; i < (await initFight()); i++) {
     commandRowsDom.push(document.createElement("d"));
     fightContent.appendChild(commandRowsDom[i]);
   }
-  newCommand(currentLevel.instructions.length);
+  // create_commands();
+  newCommand();
 };
 export const fightFn = async (key) => {
   incompleteSequence.push(key);
-  if (incompleteSequence.length !== currentLevel.presses) return;
   let result = await check_player_action(incompleteSequence);
-  // let result = true;
-  // for (let index = 0; index < currentLevel.presses; index++) {
-  //   if (
-  //     currentRanges[index].find(
-  //       (element) => element === incompleteSequence[index]
-  //     ) === undefined
-  //   ) {
-  //     result = false;
-  //     break;
-  //   }
-  // }
-  if (result) {
-    progressLost -= 4;
-    if (progressLost < 0) return levelsID;
-  } else if (progressLost < progressLostMax) progressLost += 4;
-  else progressLost = progressLostMax;
+  // console.log(result);
+
+  switch (result) {
+    // await check_player_action(incompleteSequence)
+    case 0:
+      if (progressLost < progressLostMax) progressLost += 4;
+      else progressLost = progressLostMax;
+      break;
+    case 1:
+      progressLost -= 4;
+      if (progressLost < 0) return levelsID;
+      break;
+    default:
+      return;
+  }
   incompleteSequence = [];
-  newCommand(currentLevel.instructions.length);
+  newCommand();
 };
 window.addEventListener("keyup", () => (incompleteSequence = []));

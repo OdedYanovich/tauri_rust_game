@@ -81,7 +81,7 @@ window.addEventListener("keydown", async (event) => {
     soundKeys,
     exitKeys,
     creditKeys,
-    await getButtons(5),// Should be determine by the current level that doesn't exist at the start.
+    await getButtons(),// Should be determine by the current level that doesn't exist at the start.
   ];
   if (modKeys[menuMod.current - 1].includes(key)) {
     const modRequestedTransition = await menuMod.fn(key);

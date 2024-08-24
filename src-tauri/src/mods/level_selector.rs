@@ -1,29 +1,23 @@
+use super::fight::CommandType::{self, *};
 use phf::{phf_map, Map};
-use PlayerInstruction::*;
+// use PlayerInstruction::*;
 
-pub static mut LEVEL_ID: u8 = 0;
+pub static mut LEVEL_ID: u8 = 1;
 
-pub enum PlayerInstruction {
-    Bi,
-    Nbi,
-    //     B0b,
-    //     Nb0b,
-}
 pub struct Level {
     pub buttons: u8,
     pub presses: u8,
-    pub commands: &'static [&'static [PlayerInstruction]],
-}
-impl Level {
-    pub fn get_buttons(&self) -> &[char] {
-        &['f', 'g', 'h', 'j', 'k'][..(self.buttons as usize)]
-    }
+    pub commands: &'static [&'static [CommandType]],
 }
 
+#[tauri::command]
+pub fn get_buttons<'a>() -> &'a [char] {
+    &['f', 'g', 'h', 'j', 'k'][..(get_level().buttons as usize)] 
+}
 pub fn get_level<'a>() -> &'a Level {
-    unsafe { 
-        println!("{}",std::ptr::addr_of!(LEVEL_ID));
-        &(LEVELS[&(std::ptr::addr_of!(LEVEL_ID) as u8)]) }
+    let t;
+    t = unsafe { LEVEL_ID };
+    &(LEVELS[&t])
 }
 #[tauri::command]
 pub fn set_level(id: u8) {

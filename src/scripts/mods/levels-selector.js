@@ -1,7 +1,7 @@
 import { fightID, allLevels, selectedLevels, wrapElement } from "../dom.js";
 import { setLevel } from "../interop.js";
 
-export let chosenLevel = 0;
+let chosenLevel = 0;
 export const levelKeys = ["w", "s", "x", "e", "d", "c", "r"];
 export const levelButtons = ["w", "s", "x", "e", "d", "c"];
 export const isTableFull = (answer) => {

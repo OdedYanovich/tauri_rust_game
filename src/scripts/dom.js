@@ -1,4 +1,4 @@
-import { levelButtons } from "./mods/levels.js";
+import { levelButtons } from "./mods/levels-selector.js";
 export const levelsID = 1;
 export const soundID = 2;
 export const exitID = 3;

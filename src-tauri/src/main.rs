@@ -1,6 +1,5 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-// mod levels;
 mod mods;
 
 pub type TauriStateWrapper<'a, T> = tauri::State<'a, std::sync::Mutex<T>>;

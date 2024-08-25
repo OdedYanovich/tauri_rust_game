@@ -5,7 +5,7 @@ export const exitID = 3;
 export const creditID = 4;
 export const fightID = 5;
 
-const menu = document.querySelector("#menu");
+export const menu = document.querySelector("#menu");
 const makeElement = (column, row, text, name = "d") => {
   const id = document.createElement(name);
   id.style.gridColumn = column;
@@ -15,6 +15,7 @@ const makeElement = (column, row, text, name = "d") => {
   menu.appendChild(id);
   return id;
 };
+
 const buttonColumn = 1;
 const optionColumn = 2;
 /*const levelsButton =*/ makeElement(buttonColumn, levelsID, "Q");
@@ -24,10 +25,11 @@ export const levels = makeElement(optionColumn, levelsID, "Levels");
 export const sound = makeElement(optionColumn, soundID, "Sound");
 export const exit = makeElement(optionColumn, exitID, "Exit");
 /*const credit =*/ makeElement(optionColumn, "var(--credit)", "Credit");
-const continueFight = makeElement("1/3", 3, "X Continue");
-continueFight.style.fontSize = "2rem";
-continueFight.style.justifyItems = "center";
-continueFight.style.alignItems = "end";
+
+// const continueFight = makeElement("1/3", 3, "X Continue");
+// continueFight.style.fontSize = "2rem";
+// continueFight.style.justifyItems = "center";
+// continueFight.style.alignItems = "end";
 
 export const wrapElement = (c) => {
   return "<d>" + c + "</d>";
@@ -43,8 +45,7 @@ let soundOptionsDisplayHTML = ``;
   ["k", -10],
   ["l", -25],
 ].forEach(([key, value], index, array) => {
-  soundOptionsDisplayHTML += wrapElement(key);
-  soundOptionsDisplayHTML += wrapElement(value);
+  soundOptionsDisplayHTML += wrapElement(key) + wrapElement(value);
 });
 
 menu.querySelector("#SoundTable").innerHTML = soundOptionsDisplayHTML;
@@ -57,61 +58,15 @@ let levelsFullGrid = "";
 levelsFullGridContent.forEach((v) => {
   levelsFullGrid += wrapElement(v);
 });
-// [
-//   "",
-//   "",
-//   "",
-//   "",
-//   "",
-//   "",
-//   "",
-//   "W",
-//   "DO",
-//   7,
-//   13,
-//   19,
-//   25,
-//   31,
-//   "S",
-//   "Don't",
-//   8,
-//   14,
-//   20,
-//   26,
-//   32,
-//   "X",
-//   3,
-//   9,
-//   15,
-//   21,
-//   27,
-//   "",
-//   "E",
-//   4,
-//   10,
-//   16,
-//   22,
-//   28,
-//   "",
-//   "D",
-//   5,
-//   11,
-//   17,
-//   23,
-//   29,
-//   "",
-//   "C",
-//   6,
-//   12,
-//   18,
-//   24,
-//   "Score",
-//   "Rush",
-// ].forEach((c) => {
-//   levelsOptionsDisplayHTML += wrapElement(c);
-// });
-
-// document.querySelector("#LevelsContent").innerHTML = levelsOptionsDisplayHTML;
 export const allLevels = menu.querySelector("#allLevels");
 allLevels.innerHTML = levelsFullGrid;
 export const selectedLevels = menu.querySelector("#selectedLevels");
+
+export const content = [
+  document.querySelector("#LevelsContent"),
+  document.querySelector("#SoundContent"),
+  document.querySelector("#ExitContent"),
+  document.querySelector("#CreditContent"),
+  document.querySelector("#GameContent"),
+  document.querySelector("#GameContent"),
+];

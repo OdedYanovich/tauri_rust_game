@@ -2,9 +2,10 @@ import { fightFn, fightInit } from "./mods/fight.js";
 import { creditFn, creditKeys } from "./mods/credit.js";
 import { exitFn, exitKeys } from "./mods/exit.js";
 import { soundFn, soundKeys } from "./mods/sound.js";
-import { levelsFn, isTableFull, levelKeys } from "./mods/levels.js";
+import { levelsFn, isTableFull, levelKeys } from "./mods/levels-selector.js";
 import {
   levels,
+  menu,
   sound,
   exit,
   levelsID,
@@ -12,18 +13,11 @@ import {
   exitID,
   creditID,
   fightID,
+  content,
 } from "./dom.js";
 import { getButtons } from "./interop.js";
 
 const sideOptionText = [levels, sound, exit];
-const content = [
-  document.querySelector("#LevelsContent"),
-  document.querySelector("#SoundContent"),
-  document.querySelector("#ExitContent"),
-  document.querySelector("#CreditContent"),
-  document.querySelector("#GameContent"),
-  document.querySelector("#GameContent"),
-];
 
 const modsFunction = {
   1: levelsFn,
@@ -32,7 +26,6 @@ const modsFunction = {
   4: creditFn,
   5: fightFn,
 };
-// getComputedStyle(document.documentElement).getPropertyValue("--credit")
 
 class MenuMod {
   constructor() {
@@ -45,7 +38,7 @@ class MenuMod {
       sideOptionText[this.current - 1].classList.add("seen");
 
     this.current = mod;
-    document.documentElement.style.setProperty("--credit", this.current);
+    menu.style.setProperty("--credit", this.current);
     content[this.current - 1].classList.add("seen");
     if (this.current < creditID)
       sideOptionText[this.current - 1].classList.remove("seen");
@@ -66,6 +59,7 @@ const keyToMod = {
   z: exitID,
 };
 window.addEventListener("keydown", async (event) => {
+  if (event.repeat) return;
   let key = event.key.toLowerCase();
   let mod_associated_with_current_press = keyToMod[key];
   if (mod_associated_with_current_press) {
@@ -81,12 +75,10 @@ window.addEventListener("keydown", async (event) => {
     soundKeys,
     exitKeys,
     creditKeys,
-    await getButtons(),// Should be determine by the current level that doesn't exist at the start.
+    await getButtons(), // Should be determine by the current level that doesn't exist at the start.
   ];
   if (modKeys[menuMod.current - 1].includes(key)) {
     const modRequestedTransition = await menuMod.fn(key);
     if (modRequestedTransition) menuMod.set(modRequestedTransition);
   }
 });
-
-// setAttribute;

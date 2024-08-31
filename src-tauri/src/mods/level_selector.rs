@@ -1,4 +1,4 @@
-use super::fight::CommandType::{self, *};
+use super::fight::PlayerButtonRelationship::{self, *};
 use phf::{phf_map, Map};
 // use PlayerInstruction::*;
 
@@ -7,12 +7,12 @@ pub static mut LEVEL_ID: u8 = 1;
 pub struct Level {
     pub buttons: u8,
     pub presses: u8,
-    pub commands: &'static [&'static [CommandType]],
+    pub commands: &'static [&'static [PlayerButtonRelationship]],
 }
 
 #[tauri::command]
 pub fn get_buttons<'a>() -> &'a [char] {
-    &['f', 'g', 'h', 'j', 'k'][..(get_level().buttons as usize)] 
+    &['f', 'g', 'h', 'j', 'k'][..(get_level().buttons as usize)]
 }
 pub fn get_level<'a>() -> &'a Level {
     let t;

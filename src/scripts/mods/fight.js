@@ -26,19 +26,18 @@ export const fightInit = async () => {
 };
 const newCommand = async () => {
   let commands = await create_commands();
-  for (const command in commands) {
-    switch (commands[command]["command_type"]) {
+  for (const i in commands) {
+    switch (commands[i]["relation"]) {
       case "Bi":
-        commandRowsDom[command].style.borderStyle = "none";
+        commandRowsDom[i].style.borderStyle = "none";
         break;
 
       case "Nbi":
-        commandRowsDom[command].style.borderStyle = "solid";
+        commandRowsDom[i].style.borderStyle = "solid";
         break;
     }
-    commandRowsDom[command].innerHTML =
-      wrapElement(commands[command]["button"]) +
-      wrapElement(commands[command]["index"] + 1);
+    commandRowsDom[i].innerHTML = wrapElement(commands[i]["visual"]["Button"]);
+    // +wrapElement(commands[i]["index"] + 1);
   }
 };
 export const fightFn = async (key) => {

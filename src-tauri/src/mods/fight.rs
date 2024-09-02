@@ -37,7 +37,7 @@ fn shuffled_indices(length: u8) -> Vec<u8> {
 
 #[tauri::command]
 pub fn init_fight(commands_vec: TauriStateWrapper<Vec<Command>>) -> usize {
-    let command_length = (*get_level()).commands.len();
+    let command_length = get_level().commands.len();
     *commands_vec.lock().unwrap() = Vec::with_capacity(command_length);
     command_length
 }
@@ -57,25 +57,8 @@ pub struct Command {
     visual: Visual,
 }
 
-// fn gen_command(
-//     potential_index: std::ops::Range<u8>,
-//     mut letters: Vec<char>,
-//     output: &mut Vec<Commad>,
-// ) {
-//     if let Some(t) = letters.pop() {
-//         gen_command(potential_index, letters, output);
-//     }
-// }
 #[tauri::command]
 pub fn create_commands(commands_vec: TauriStateWrapper<Vec<Command>>) -> Vec<Command> {
-        // *command = Command {
-        //     visual: Visual::Button(thread_rng().gen_range(first..(level.presses - i as u8)) as char),
-        //     relation: level.commands[command_index[i] as usize]
-        //         .choose(&mut thread_rng())
-        //         .unwrap()
-        //         .clone(),
-        // };
-
     let level = get_level();
     let button_index = shuffled_indices(level.buttons);
     let mut commands_vec = commands_vec.lock().unwrap();
@@ -84,8 +67,13 @@ pub fn create_commands(commands_vec: TauriStateWrapper<Vec<Command>>) -> Vec<Com
 
     let mut first = 0;
     for i in 0..level.commands.len() {
+        println!(
+            "{:?}: {:?}",
+            level,
+            first..=(level.presses - level.commands.len() as u8)
+        );
         let command_selected_press =
-            thread_rng().gen_range(first..(level.commands.len() - i) as u8);
+            thread_rng().gen_range(first..=(level.presses - level.commands.len() as u8));
         let (visual, relation) = if command_selected_press > 0 {
             (
                 Visual::Skip(command_selected_press),
@@ -100,45 +88,20 @@ pub fn create_commands(commands_vec: TauriStateWrapper<Vec<Command>>) -> Vec<Com
                     .clone(),
             )
         };
-        first += command_selected_press + 1;
+        println!("{} {}", true as u8, false as u8);
+        first += command_selected_press
+            + if i < command_index.len() {
+                (!((relation
+                    == level.commands[command_index[i + 1] as usize]
+                        .choose(&mut thread_rng())
+                        .unwrap()
+                        .clone())
+                    && relation == PlayerButtonRelationship::Nbi)) as u8
+            } else {
+                0
+            };
         commands_vec.push(Command { visual, relation });
     }
-    // for (i, command) in commands_vec.iter_mut().enumerate() {
-    //     let command_selected_press =
-    //         thread_rng().gen_range(first..(level.commands.len() - i) as u8);
-    //     let (visual, relation) = if command_selected_press > 0 {
-    //         (
-    //             Visual::Skip(command_selected_press),
-    //             PlayerButtonRelationship::Bi,
-    //         )
-    //     } else {
-    //         (
-    //             Visual::Button(get_buttons()[button_index[i] as usize]),
-    //             level.commands[command_index[i] as usize]
-    //                 .choose(&mut thread_rng())
-    //                 .unwrap()
-    //                 .clone(),
-    //         )
-    //     };
-    //     first += command_selected_press + 1;
-    //     *command = Command { visual, relation };
-    // }
-
-    // let range_index = shuffled_indices(level.presses);
-    // for i in 0..level.commands.len() {
-    //     commands_vec.push(
-    //         (
-    //             range_index[i],
-    //             get_buttons()[button_index[i] as usize],
-    //             level.commands[command_index[i] as usize]
-    //                 .choose(&mut thread_rng())
-    //                 .unwrap()
-    //                 .clone(),
-    //         )
-    //             .into(),
-    //     );
-    // }
-
     // println!("{:#?}\n", (*commands_vec));
     (*commands_vec).clone()
 }

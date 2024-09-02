@@ -3,7 +3,7 @@ use phf::{phf_map, Map};
 // use PlayerInstruction::*;
 
 pub static mut LEVEL_ID: u8 = 1;
-
+#[derive(Debug)]
 pub struct Level {
     pub buttons: u8,
     pub presses: u8,
@@ -15,8 +15,7 @@ pub fn get_buttons<'a>() -> &'a [char] {
     &['f', 'g', 'h', 'j', 'k'][..(get_level().buttons as usize)]
 }
 pub fn get_level<'a>() -> &'a Level {
-    let t;
-    t = unsafe { LEVEL_ID };
+    let t = unsafe { LEVEL_ID };
     &(LEVELS[&t])
 }
 #[tauri::command]

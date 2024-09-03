@@ -1,4 +1,4 @@
-const invoke = window.__TAURI__.core.invoke; //window.__TAURI__.tauri;
+const invoke = window.__TAURI__.core.invoke;
 export const getButtons = async (buttons) => {
   return await invoke("get_buttons");
 };
@@ -14,4 +14,14 @@ export const create_commands = async () => {
 };
 export const check_player_action = async (action) => {
   return await invoke("check_player_action", { action: action });
+};
+
+export const test1 = async () => {
+  return await invoke("test1");
+};
+export const test2 = async () => {
+  return await invoke("test2");
+};
+export const test3 = async () => {
+  return await invoke("test3");
 };

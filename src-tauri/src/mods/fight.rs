@@ -2,33 +2,7 @@ use super::level_selector::{get_buttons, get_level};
 use crate::TauriStateWrapper;
 use rand::{seq::SliceRandom, thread_rng, Rng};
 
-// https://serde.rs/enum-number.html
-#[derive(PartialEq, Default, serde::Serialize, Clone, Debug)]
-pub enum PlayerButtonRelationship {
-    #[default]
-    Bi,
-    Nbi,
-    //     B0b,
-    //     Nb0b,
-    //     B0nb,
-    //     Nb0nb,
-}
-// #[derive(Default, Clone, serde::Serialize, Debug)]
-// pub struct Command {
-//     command_type: PlayerButtonRelation,
-//     visual: char,
-//     index: u8,
-// }
-// impl From<(u8, char, PlayerButtonRelation)> for Command {
-//     fn from(value: (u8, char, PlayerButtonRelation)) -> Self {
-//         Self {
-//             command_type: value.2,
-//             visual: value.1,
-//             index: value.0,
-//         }
-//     }
-// }
-
+#[inline]
 fn shuffled_indices(length: u8) -> Vec<u8> {
     let mut vec: Vec<u8> = (0..length).collect();
     vec.shuffle(&mut thread_rng());
@@ -40,6 +14,17 @@ pub fn init_fight(commands_vec: TauriStateWrapper<Vec<Command>>) -> usize {
     let command_length = get_level().commands.len();
     *commands_vec.lock().unwrap() = Vec::with_capacity(command_length);
     command_length
+}
+// https://serde.rs/enum-number.html
+#[derive(PartialEq, Default, serde::Serialize, Clone, Debug)]
+pub enum PlayerButtonRelationship {
+    #[default]
+    Bi,
+    Nbi,
+    //     B0b,
+    //     Nb0b,
+    //     B0nb,
+    //     Nb0nb,
 }
 #[derive(Clone, serde::Serialize, Debug)]
 enum Visual {
@@ -60,9 +45,9 @@ pub struct Command {
 #[tauri::command]
 pub fn create_commands(commands_vec: TauriStateWrapper<Vec<Command>>) -> Vec<Command> {
     let level = get_level();
-    let button_index = shuffled_indices(level.buttons);
+    let randomized_indices_to_buttons = shuffled_indices(level.button_count);
     let mut commands_vec = commands_vec.lock().unwrap();
-    let command_index = shuffled_indices(level.commands.len() as u8);
+    let randomized_indices_to_commands = shuffled_indices(level.commands.len() as u8);
     commands_vec.clear();
 
     let mut first = 0;
@@ -70,10 +55,13 @@ pub fn create_commands(commands_vec: TauriStateWrapper<Vec<Command>>) -> Vec<Com
         println!(
             "{:?}: {:?}",
             level,
-            first..=(level.presses - level.commands.len() as u8)
+            first..=(level.press_demands_count - level.commands.len() as u8)
         );
+
+        // Test rng outside of the loop
+        let mut rng = thread_rng();
         let command_selected_press =
-            thread_rng().gen_range(first..=(level.presses - level.commands.len() as u8));
+            rng.gen_range(first..=(level.press_demands_count - level.commands.len() as u8));
         let (visual, relation) = if command_selected_press > 0 {
             (
                 Visual::Skip(command_selected_press),
@@ -81,25 +69,22 @@ pub fn create_commands(commands_vec: TauriStateWrapper<Vec<Command>>) -> Vec<Com
             )
         } else {
             (
-                Visual::Button(get_buttons()[button_index[i] as usize]),
-                level.commands[command_index[i] as usize]
-                    .choose(&mut thread_rng())
+                Visual::Button(get_buttons()[randomized_indices_to_buttons[i] as usize]),
+                level.commands[randomized_indices_to_commands[i] as usize]
+                    .choose(&mut rng)
                     .unwrap()
                     .clone(),
             )
         };
-        println!("{} {}", true as u8, false as u8);
-        first += command_selected_press
-            + if i < command_index.len() {
-                (!((relation
-                    == level.commands[command_index[i + 1] as usize]
-                        .choose(&mut thread_rng())
-                        .unwrap()
-                        .clone())
-                    && relation == PlayerButtonRelationship::Nbi)) as u8
-            } else {
-                0
-            };
+        first += command_selected_press;
+        if i < level.commands.len() - 1 {
+            first += (!((relation
+                == level.commands[randomized_indices_to_commands[i + 1] as usize]
+                    .choose(&mut rng)
+                    .unwrap()
+                    .clone())
+                && relation == PlayerButtonRelationship::Nbi)) as u8;
+        }
         commands_vec.push(Command { visual, relation });
     }
     // println!("{:#?}\n", (*commands_vec));
@@ -108,7 +93,7 @@ pub fn create_commands(commands_vec: TauriStateWrapper<Vec<Command>>) -> Vec<Com
 
 #[tauri::command]
 pub fn check_player_action(action: Vec<char>, commands_vec: TauriStateWrapper<Vec<Command>>) -> u8 {
-    return if action.len() != get_level().presses as usize {
+    return if action.len() != get_level().press_demands_count as usize {
         2
     } else {
         let mut current_action = 0;

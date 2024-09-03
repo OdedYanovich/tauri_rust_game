@@ -5,15 +5,16 @@ use phf::{phf_map, Map};
 pub static mut LEVEL_ID: u8 = 1;
 #[derive(Debug)]
 pub struct Level {
-    pub buttons: u8,
-    pub presses: u8,
+    pub button_count: u8,
+    pub press_demands_count: u8,
     pub commands: &'static [&'static [PlayerButtonRelationship]],
 }
 
 #[tauri::command]
 pub fn get_buttons<'a>() -> &'a [char] {
-    &['f', 'g', 'h', 'j', 'k'][..(get_level().buttons as usize)]
+    &['f', 'g', 'h', 'j', 'k'][..(get_level().button_count as usize)]
 }
+#[inline]
 pub fn get_level<'a>() -> &'a Level {
     let t = unsafe { LEVEL_ID };
     &(LEVELS[&t])
@@ -24,16 +25,16 @@ pub fn set_level(id: u8) {
 }
 
 const LEVELS: Map<u8, Level> = phf_map! {
-    1u8  => Level{buttons:2,presses:1,commands:&[&[Bi]]},
-    2u8  => Level{buttons:2,presses:1,commands:&[&[Nbi]]},
-    3u8  => Level{buttons:2,presses:1,commands:&[&[Bi,Nbi]]},
-    4u8  => Level{buttons:3,presses:1,commands:&[&[Bi]]},
-    5u8  => Level{buttons:3,presses:1,commands:&[&[Nbi]]},
-    6u8  => Level{buttons:3,presses:1,commands:&[&[Bi,Nbi]]},
-    7u8  => Level{buttons:3,presses:2, commands:&[&[Bi]]},
-    8u8  => Level{buttons:3,presses:2,commands:&[&[Nbi]]},
-    9u8  => Level{buttons:3,presses:2,commands:&[&[Bi,Nbi]]},
-    10u8 => Level{buttons:3,presses:1,commands:&[&[Nbi],&[Nbi]]},
-    11u8 => Level{buttons:3,presses:2,commands:&[&[Bi],&[Bi]]},
-    12u8 => Level{buttons:3,presses:2,commands:&[&[Nbi],&[Nbi]]},
+    1u8  => Level{button_count:2,press_demands_count:1,commands:&[&[Bi]]},
+    2u8  => Level{button_count:2,press_demands_count:1,commands:&[&[Nbi]]},
+    3u8  => Level{button_count:2,press_demands_count:1,commands:&[&[Bi,Nbi]]},
+    4u8  => Level{button_count:3,press_demands_count:1,commands:&[&[Bi]]},
+    5u8  => Level{button_count:3,press_demands_count:1,commands:&[&[Nbi]]},
+    6u8  => Level{button_count:3,press_demands_count:1,commands:&[&[Bi,Nbi]]},
+    7u8  => Level{button_count:3,press_demands_count:2, commands:&[&[Bi]]},
+    8u8  => Level{button_count:3,press_demands_count:2,commands:&[&[Nbi]]},
+    9u8  => Level{button_count:3,press_demands_count:2,commands:&[&[Bi,Nbi]]},
+    10u8 => Level{button_count:3,press_demands_count:1,commands:&[&[Nbi],&[Nbi]]},
+    11u8 => Level{button_count:3,press_demands_count:2,commands:&[&[Bi],&[Bi]]},
+    12u8 => Level{button_count:3,press_demands_count:2,commands:&[&[Nbi],&[Nbi]]},
 };

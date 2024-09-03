@@ -20,8 +20,17 @@ fn main() {
             check_player_action,
             init_fight,
             create_commands,
+            temp1,
+            temp2,
+            temp3,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
+#[tauri::command]
+fn temp1() {}
+#[tauri::command]
+fn temp2() {}
+#[tauri::command]
+fn temp3() {}

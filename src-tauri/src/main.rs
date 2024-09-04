@@ -2,12 +2,13 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 mod mods;
 
-pub type TauriStateWrapper<'a, T> = tauri::State<'a, std::sync::Mutex<T>>;
-const PROGRESS_LOST_MAX: u8 = 50;
-
 use mods::fight::{check_player_action, create_commands, init_fight, Command};
 use mods::level_selector::{get_buttons, set_level};
 use std::sync::Mutex;
+
+pub type TauriStateWrapper<'a, T> = tauri::State<'a, std::sync::Mutex<T>>;
+const PROGRESS_LOST_MAX: u8 = 50;
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())

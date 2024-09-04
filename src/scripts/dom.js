@@ -1,4 +1,5 @@
 import { levelButtons } from "./mods/levels-selector.js";
+import { keyToValue } from "./mods/sound.js";
 export const levelsID = 1;
 export const soundID = 2;
 export const exitID = 3;
@@ -34,19 +35,9 @@ export const exit = makeElement(optionColumn, exitID, "Exit");
 export const wrapElement = (c) => {
   return "<d>" + c + "</d>";
 };
-let soundOptionsDisplayHTML = ``;
-[
-  ["y", 1],
-  ["u", 5],
-  ["i", 10],
-  ["o", 25],
-  ["h", -1],
-  ["j", -5],
-  ["k", -10],
-  ["l", -25],
-].forEach(([key, value], index, array) => {
-  soundOptionsDisplayHTML += wrapElement(key) + wrapElement(value);
-});
+const soundOptionsDisplayHTML = Object.entries(keyToValue)
+  .map(([key, value]) => wrapElement(key) + wrapElement(value))
+  .join("");
 
 menu.querySelector("#SoundTable").innerHTML = soundOptionsDisplayHTML;
 let levelsFullGridContent = levelButtons //.slice(0, 6)

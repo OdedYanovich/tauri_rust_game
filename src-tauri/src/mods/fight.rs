@@ -49,17 +49,10 @@ pub fn create_commands(commands_vec: TauriStateWrapper<Vec<Command>>) -> Vec<Com
     let mut commands_vec = commands_vec.lock().unwrap();
     let randomized_indices_to_commands = shuffled_indices(level.commands.len() as u8);
     commands_vec.clear();
+    let mut rng = thread_rng(); //Should only be created ones
 
     let mut first = 0;
     for i in 0..level.commands.len() {
-        println!(
-            "{:?}: {:?}",
-            level,
-            first..=(level.press_demands_count - level.commands.len() as u8)
-        );
-
-        // Test rng outside of the loop
-        let mut rng = thread_rng();
         let command_selected_press =
             rng.gen_range(first..=(level.press_demands_count - level.commands.len() as u8));
         let (visual, relation) = if command_selected_press > 0 {
@@ -87,7 +80,6 @@ pub fn create_commands(commands_vec: TauriStateWrapper<Vec<Command>>) -> Vec<Com
         }
         commands_vec.push(Command { visual, relation });
     }
-    // println!("{:#?}\n", (*commands_vec));
     (*commands_vec).clone()
 }
 

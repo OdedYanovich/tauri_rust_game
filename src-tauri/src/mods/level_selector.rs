@@ -1,9 +1,7 @@
 use super::fight::PlayerButtonRelationship::{self, *};
 use phf::{phf_map, Map};
-// use PlayerInstruction::*;
 
 pub static mut LEVEL_ID: u8 = 1;
-#[derive(Debug)]
 pub struct Level {
     pub button_count: u8,
     pub press_demands_count: u8,

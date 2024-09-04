@@ -5,4 +5,5 @@
 #SoundTable {
   grid-row: 3;
   grid-template: 1fr 1fr / repeat(8, 1fr);
+  grid-auto-flow: column;
 }

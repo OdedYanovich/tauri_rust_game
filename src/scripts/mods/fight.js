@@ -1,6 +1,8 @@
 import { levelsID, wrapElement } from "../dom.js";
 import { initFight, create_commands, check_player_action } from "../interop.js";
 
+const listen = window.__TAURI__.event.listen;
+
 const progressLostMax = 50;
 let progressLost = progressLostMax;
 setInterval(() => {
@@ -24,6 +26,12 @@ export const fightInit = async () => {
   }
   newCommand();
 };
+// await listen("add_command", (i, command) => {
+//   commandRowsDom[i].innerHTML = wrapElement(command);
+// });
+// await listen("indicate_Nbi", (i) => {
+//   commandRowsDom[i].style.borderStyle = "solid";
+// });
 const newCommand = async () => {
   let commands = await create_commands();
   for (const i in commands) {
@@ -37,7 +45,6 @@ const newCommand = async () => {
         break;
     }
     commandRowsDom[i].innerHTML = wrapElement(commands[i]["visual"]["Button"]);
-    // +wrapElement(commands[i]["index"] + 1);
   }
 };
 export const fightFn = async (key) => {

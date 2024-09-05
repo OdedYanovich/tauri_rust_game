@@ -1,7 +1,7 @@
 import { fightFn, fightInit } from "./mods/fight.js";
 import { creditFn, creditKeys } from "./mods/credit.js";
 import { exitFn, exitKeys } from "./mods/exit.js";
-import { soundFn, soundKeys } from "./mods/sound.js";
+import { soundFn, keyToValue } from "./mods/sound.js";
 import { levelsFn, isTableFull, levelKeys } from "./mods/levels-selector.js";
 import {
   levels,
@@ -72,7 +72,7 @@ window.addEventListener("keydown", async (event) => {
   }
   const modKeys = [
     levelKeys,
-    soundKeys,
+    Object.keys(keyToValue),
     exitKeys,
     creditKeys,
     await getButtons(), // Should be determine by the current level that doesn't exist at the start.
@@ -81,4 +81,9 @@ window.addEventListener("keydown", async (event) => {
     const modRequestedTransition = await menuMod.fn(key);
     if (modRequestedTransition) menuMod.set(modRequestedTransition);
   }
+});
+
+window.addEventListener("keydown", async (event) => {
+  if (event.repeat) return;
+  await invoke("activate_menu", { key: event.key.toLowerCase() });
 });

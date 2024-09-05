@@ -1,9 +1,13 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+mod menu;
 mod mods;
 
-use mods::fight::{check_player_action, create_commands, init_fight, Command};
-use mods::level_selector::{get_buttons, set_level};
+use menu::{activate_menu, Menu};
+use mods::{
+    fight::{check_player_action, create_commands, init_fight, Command},
+    level_selector::{get_buttons, set_level},
+};
 use std::sync::Mutex;
 
 pub type TauriStateWrapper<'a, T> = tauri::State<'a, std::sync::Mutex<T>>;
@@ -15,12 +19,14 @@ fn main() {
         .plugin(tauri_plugin_shell::init())
         .manage(Mutex::new(PROGRESS_LOST_MAX))
         .manage(Mutex::new(vec![Command::default()]))
+        .manage(Menu::default())
         .invoke_handler(tauri::generate_handler![
             get_buttons,
             set_level,
             check_player_action,
             init_fight,
             create_commands,
+            activate_menu,
             temp1,
             temp2,
             temp3,

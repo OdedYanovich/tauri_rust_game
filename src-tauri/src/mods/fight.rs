@@ -1,7 +1,7 @@
 use super::level_selector::{get_buttons, get_level};
 use crate::TauriStateWrapper;
 use rand::{seq::SliceRandom, thread_rng, Rng};
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle /*Emitter*/};
 
 #[inline]
 fn shuffled_indices(length: u8) -> Vec<u8> {

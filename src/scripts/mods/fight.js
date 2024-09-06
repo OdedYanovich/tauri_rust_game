@@ -16,6 +16,9 @@ let commandRowsDom;
 const healthHTML = document.querySelector(".health");
 let incompleteSequence;
 
+await listen("fight_init", () => {
+  fightInit();
+});
 export const fightInit = async () => {
   progressLost = progressLostMax;
   commandRowsDom = [];

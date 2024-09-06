@@ -1,30 +1,73 @@
-use crate::TauriStateWrapper;
+use crate::{mods::level_selector::get_buttons, TauriStateWrapper};
 use phf::{phf_map, Map};
+use tauri::{AppHandle, Emitter};
 
-#[derive(Default, Clone, PartialEq)]
+#[derive(Default, Clone, PartialEq, PartialOrd)]
 pub enum Menu {
-    Fight,
-    LevelSelector,
+    LevelSelector = 1,
     Sound,
     Exit,
     #[default]
     Credit,
+    Fight,
 }
 impl Menu {
-    fn set(&mut self, i: ()) {}
+    fn set(&mut self, new_mod: Self, app: AppHandle) {
+        // These events can be done with 1 emission
+        app.emit("hide_content", self.clone() as u8 - 1).unwrap();
+        if self.clone() < Menu::Credit {
+            app.emit("show_option_text", self.clone() as u8 - 1)
+                .unwrap();
+        }
+        *self = new_mod;
+        app.emit("set_credit_text_position", self.clone() as u8)
+            .unwrap();
+
+        app.emit("show_content", self.clone() as u8 - 1).unwrap();
+        if self.clone() < Menu::Credit {
+            app.emit("hide_option_text", self.clone() as u8 - 1)
+                .unwrap();
+        }
+
+        if self.clone() == Menu::Fight {
+            app.emit("fight_init", ()).unwrap();
+        }
+    }
 }
 #[tauri::command]
-pub fn activate_menu(current_mod: TauriStateWrapper<Menu>, key: char) {
-    let mod_associated_with_current_press = KEY_MOD_ASSOCIATION.get(&key).clone();
+pub fn activate_menu(current_mod: TauriStateWrapper<Menu>, key: char, app: AppHandle) {
+    let mod_associated_with_current_press = KEY_MOD_ASSOCIATION.get(&key);
+    let mut current_mod = current_mod.lock().unwrap();
     if let Some(potential_mod) = mod_associated_with_current_press {
-        let mut t = current_mod.lock().unwrap();
-        (*t).set(if *t == *potential_mod {
-        } else {
-        })
+        let temp = current_mod.clone();
+        (*current_mod).set(
+            if temp == *potential_mod {
+                Menu::Credit
+            } else {
+                potential_mod.clone()
+            },
+            app,
+        );
+        return;
     }
+    let MOD_KEYS: [&[char]; 5] = [
+        &['w', 's', 'x', 'e', 'd', 'c', 'r'],
+        &['l', 'k', 'j', 'h', 'y', 'u', 'i', 'o'],
+        &['y'],
+        &['y'],
+        get_buttons(),
+    ];
+    if let Some(t) = MOD_KEYS.get(current_mod.clone() as usize - 1) {}
 }
 const KEY_MOD_ASSOCIATION: Map<char, Menu> = phf_map! {
     'q' => Menu::LevelSelector,
     'a' => Menu::Sound,
     'z' => Menu::Exit,
 };
+const MOD_FUNCTIONS: [fn(app: AppHandle, key: char); 5] = [
+    |app: AppHandle, key: char| app.emit("update_level_selector", key).unwrap(),
+    |app: AppHandle, key: char| app.emit("update_sound", key).unwrap(),
+    |app: AppHandle, key: char| app.emit("update_exit", key).unwrap(),
+    |app: AppHandle, key: char| app.emit("update_credit", key).unwrap(),
+    |app: AppHandle, key: char| app.emit("update_fight", key).unwrap(),
+];

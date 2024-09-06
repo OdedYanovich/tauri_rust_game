@@ -4,7 +4,7 @@ import { exitFn, exitKeys } from "./mods/exit.js";
 import { soundFn, keyToValue } from "./mods/sound.js";
 import { levelsFn, isTableFull, levelKeys } from "./mods/levels-selector.js";
 import {
-  levels,
+  levelSelector,
   menu,
   sound,
   exit,
@@ -17,7 +17,28 @@ import {
 } from "./dom.js";
 import { getButtons } from "./interop.js";
 
-const sideOptionText = [levels, sound, exit];
+const listen = window.__TAURI__.event.listen;
+await listen("show_content", (i) => {
+  content[i].classList.add("seen");
+});
+await listen("hide_content", (i) => {
+  content[i].classList.remove("seen");
+});
+await listen("show_option_text", (i) => {
+  sideOptionTextElements[i].classList.add("seen");
+});
+await listen("hide_option_text", (i) => {
+  sideOptionTextElements[i].classList.remove("seen");
+});
+await listen("set_credit_text_position", (position) => {
+  menu.style.setProperty("--credit", position); //Make it not "menu"
+});
+window.addEventListener("keydown", async (event) => {
+  if (event.repeat) return;
+  await invoke("activate_menu", { key: event.key.toLowerCase() });
+});
+
+const sideOptionTextElements = [levelSelector, sound, exit];
 
 const modsFunction = {
   1: levelsFn,
@@ -35,13 +56,14 @@ class MenuMod {
   set(mod) {
     content[this.current - 1].classList.remove("seen");
     if (this.current < creditID)
-      sideOptionText[this.current - 1].classList.add("seen");
+      sideOptionTextElements[this.current - 1].classList.add("seen");
 
     this.current = mod;
     menu.style.setProperty("--credit", this.current);
     content[this.current - 1].classList.add("seen");
+    
     if (this.current < creditID)
-      sideOptionText[this.current - 1].classList.remove("seen");
+      sideOptionTextElements[this.current - 1].classList.remove("seen");
     this.fn = modsFunction[this.current];
 
     if (this.current === fightID) fightInit();
@@ -81,9 +103,4 @@ window.addEventListener("keydown", async (event) => {
     const modRequestedTransition = await menuMod.fn(key);
     if (modRequestedTransition) menuMod.set(modRequestedTransition);
   }
-});
-
-window.addEventListener("keydown", async (event) => {
-  if (event.repeat) return;
-  await invoke("activate_menu", { key: event.key.toLowerCase() });
 });

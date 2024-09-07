@@ -1,5 +1,7 @@
 const invoke = window.__TAURI__.core.invoke;
-export const getButtons = async (buttons) => {
+console.log(window.__TAURI__.core);
+
+export const getButtons = async () => {
   return await invoke("get_buttons");
 };
 
@@ -16,12 +18,6 @@ export const check_player_action = async (action) => {
   return await invoke("check_player_action", { action: action });
 };
 
-export const test1 = async () => {
-  return await invoke("test1");
-};
-export const test2 = async () => {
-  return await invoke("test2");
-};
-export const test3 = async () => {
-  return await invoke("test3");
+export const set_menu = async (new_mod) => {
+  return await invoke("set_interop", { newMod: new_mod });
 };

@@ -19,7 +19,6 @@
   "identifier": "com.tauri.dev",
   "plugins": {},
   "app": {
-    "withGlobalTauri": true,
     "windows": [
       {
         "title": "tauri_rust_game",
@@ -29,6 +28,7 @@
     ],
     "security": {
       "csp": null
-    }
+    },
+    "withGlobalTauri": true
   }
 }

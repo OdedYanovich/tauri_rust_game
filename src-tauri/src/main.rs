@@ -3,7 +3,7 @@
 mod menu;
 mod mods;
 
-use menu::{activate_menu, Menu};
+use menu::{activate_menu, set_interop, Menu};
 use mods::{
     fight::{check_player_action, create_commands, init_fight, Command},
     level_selector::{get_buttons, set_level},
@@ -19,7 +19,7 @@ fn main() {
         .plugin(tauri_plugin_shell::init())
         .manage(Mutex::new(PROGRESS_LOST_MAX))
         .manage(Mutex::new(vec![Command::default()]))
-        .manage(Menu::default())
+        .manage(Mutex::new(Menu::default()))
         .invoke_handler(tauri::generate_handler![
             get_buttons,
             set_level,
@@ -27,17 +27,8 @@ fn main() {
             init_fight,
             create_commands,
             activate_menu,
-            temp1,
-            temp2,
-            temp3,
+            set_interop,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-
-#[tauri::command]
-fn temp1() {}
-#[tauri::command]
-fn temp2() {}
-#[tauri::command]
-fn temp3() {}

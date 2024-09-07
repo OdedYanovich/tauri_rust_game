@@ -1,5 +1,10 @@
 import { levelsID, wrapElement } from "../dom.js";
-import { initFight, create_commands, check_player_action } from "../interop.js";
+import {
+  initFight,
+  create_commands,
+  check_player_action,
+  set_menu,
+} from "../interop.js";
 
 const listen = window.__TAURI__.event.listen;
 
@@ -59,7 +64,10 @@ export const fightFn = async (key) => {
       break;
     case 1:
       progressLost -= 4;
-      if (progressLost < 0) return levelsID;
+      if (progressLost < 0) {
+        set_menu(levelsID);
+        return;
+      } //return levelsID;
 
       break;
     default:

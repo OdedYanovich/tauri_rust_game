@@ -17,26 +17,26 @@ import {
 } from "./dom.js";
 import { getButtons } from "./interop.js";
 
-const listen = window.__TAURI__.event.listen;
-await listen("show_content", (i) => {
-  content[i].classList.add("seen");
-});
-await listen("hide_content", (i) => {
-  content[i].classList.remove("seen");
-});
-await listen("show_option_text", (i) => {
-  sideOptionTextElements[i].classList.add("seen");
-});
-await listen("hide_option_text", (i) => {
-  sideOptionTextElements[i].classList.remove("seen");
-});
-await listen("set_credit_text_position", (position) => {
-  menu.style.setProperty("--credit", position); //Make it not "menu"
-});
-window.addEventListener("keydown", async (event) => {
-  if (event.repeat) return;
-  await invoke("activate_menu", { key: event.key.toLowerCase() });
-});
+// const listen = window.__TAURI__.event.listen;
+// await listen("show_content", (i) => {
+//   content[i].classList.add("seen");
+// });
+// await listen("hide_content", (i) => {
+//   content[i].classList.remove("seen");
+// });
+// await listen("show_option_text", (i) => {
+//   sideOptionTextElements[i].classList.add("seen");
+// });
+// await listen("hide_option_text", (i) => {
+//   sideOptionTextElements[i].classList.remove("seen");
+// });
+// await listen("set_credit_text_position", (position) => {
+//   menu.style.setProperty("--credit", position); //Make it not "menu"
+// });
+// window.addEventListener("keydown", async (event) => {
+//   if (event.repeat) return;
+//   await invoke("activate_menu", { key: event.key.toLowerCase() });
+// });
 
 const sideOptionTextElements = [levelSelector, sound, exit];
 
